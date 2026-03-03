@@ -9,9 +9,10 @@
 ```bash
 cd lexaudit
 make check          # Verify env, imports, tests — all in one
+make demo-offline   # Run offline analysis on sample contract (no API needed)
 make serve          # Start API on :8000
 # (new terminal)
-make demo           # Run analysis on sample contract
+make demo           # Run analysis on sample contract (needs Anthropic key)
 ```
 
 ---
@@ -39,7 +40,7 @@ Expected output: all ✓ marks for env vars, WASM artifacts, Python imports, tes
 make test
 ```
 
-Expected: **7/7 tests pass**:
+Expected: **16/16 tests pass**:
 - `test_clause_parser_handles_fenced_json` — WIDL clause validation
 - `test_risk_parser_rejects_invalid_enum` — WIDL risk enum enforcement
 - `test_cli_json_output` — End-to-end CLI with JSON output
@@ -47,8 +48,33 @@ Expected: **7/7 tests pass**:
 - `test_human_gate_pending_when_high_risk` — Human gate triggers on HIGH
 - `test_mcp_unavailable_fail_closed` — Fail-closed when MCP is down
 - `test_parse_retry_then_fail` — Invalid applet output → retry → fail
+- `test_clause_header_detection` — Header pattern matching
+- `test_split_contract_numbered` — Numbered clause splitting
+- `test_split_contract_fallback` — Plain text fallback (single clause)
+- `test_risk_scoring_high` — HIGH keyword classification
+- `test_risk_scoring_medium` — MEDIUM keyword classification
+- `test_risk_scoring_low` — LOW (no indicators)
+- `test_local_fallback_client_clause_extractor` — MCP client clause API
+- `test_local_fallback_client_risk_scorer` — MCP client risk API
+- `test_full_pipeline_with_local_fallback` — Full offline pipeline with human gate
 
-## 4) Start Server
+## 4) Offline Demo (No API Keys Required)
+
+```bash
+make demo-offline
+```
+
+This runs the **full pipeline** using the `LocalFallbackMCPClient` — a deterministic client that mirrors the exact same logic as the on-chain Rust WASM applets (header-based clause splitting + keyword-based risk scoring). No Anthropic API key, no Weilchain node needed.
+
+Expected output:
+- 9 clauses extracted from sample NDA
+- 9 risk scores (MEDIUM and LOW)
+- 35 audit events (local JSONL)
+- Result saved to `demo_output/demo_result.json`
+
+A **pre-generated** demo result is also committed at `demo_output/demo_result.json` for instant review.
+
+## 5) Start Server
 
 ```bash
 make serve
@@ -60,9 +86,9 @@ Verify:
 curl http://localhost:8000/api/health | python3 -m json.tool
 ```
 
-Expected: `{"status": "ok", "claude": true, "weilchain": true}`
+Expected: `{"status": "ok", "claude": true, "weilchain": true, "weil_middleware": true}`
 
-## 5) Run CLI Analysis
+## 6) Run CLI Analysis
 
 ```bash
 python main.py --input contracts/sample_nda.txt --format json --no-human-gate
@@ -73,7 +99,7 @@ Expected:
 - Session ID printed
 - Audit events logged to `.runs/`
 
-## 6) API Analysis
+## 7) API Analysis
 
 ```bash
 curl -X POST http://localhost:8000/api/analyse \
@@ -82,7 +108,7 @@ curl -X POST http://localhost:8000/api/analyse \
   | python3 -m json.tool
 ```
 
-## 7) Next.js UI
+## 8) Next.js UI
 
 ```bash
 cd ui && npm run dev
@@ -93,7 +119,7 @@ cd ui && npm run dev
 - See risk distribution chart
 - View audit trail with Weilchain transaction links
 
-## 8) Verify On-Chain Audit Trail
+## 9) Verify On-Chain Audit Trail
 
 Check latest run:
 ```bash
@@ -103,7 +129,7 @@ ls -1t .runs/*.jsonl | head -1 | xargs head -5
 Each event has:
 - `weilchain_tx_status`, `weilchain_batch_id`, `weilchain_block_height`
 
-## 9) WASM Applet Verification
+## 10) WASM Applet Verification
 
 Pre-compiled WASM artifacts:
 ```bash
@@ -117,14 +143,15 @@ grep APPLET_ID .env
 
 Both deployed and **Finalized** on Weilchain (block ~3879551).
 
-## 10) Hackathon Requirement Mapping
+## 11) Hackathon Requirement Mapping
 
 | Requirement | Where | Lines |
 |---|---|---|
-| **Agentic framework** (LangGraph) | `src/agent/graph.py`, `src/agent/nodes.py` | 280+ |
+| **Agentic framework** (LangGraph-compatible) | `src/agent/control_loop.py` | 632 |
 | **Custom control loop** | `src/agent/control_loop.py` | 632 |
 | **Weilchain audit logging** | `src/agent/audit.py` | 207 |
 | **MCP applet execution** | `src/tools/router.py` | 400 |
+| **Local fallback (offline demo)** | `src/tools/local_fallback.py` | 230 |
 | **WIDL interfaces** | `src/applets/*.widl` | 53 |
 | **Rust WASM applets** | `rust_applets/*/src/lib.rs` | 284 |
 | **weil_ai SDK** (WeilAgent, middleware, auth) | `src/agent/audit.py`, `src/api/server.py` | — |

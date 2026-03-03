@@ -3,12 +3,15 @@ from __future__ import annotations
 import asyncio
 import hashlib
 import json
+import logging
 import time
 from dataclasses import asdict
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 from src.types import AuditEvent
+
+logger = logging.getLogger(__name__)
 
 try:
     from weil_ai import WeilAgent
@@ -139,9 +142,10 @@ class WeilAuditLogger:
                 wallet=self._wallet,
             )
             self.enabled = True
-        except Exception:  # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
             self.enabled = False
             self._agent = None
+            logger.warning("WeilAuditLogger initialization failed: %s", exc)
 
     @property
     def wallet(self) -> Any:
@@ -204,4 +208,4 @@ class WeilAuditLogger:
             )
         except Exception:  # noqa: BLE001
             # Fail open — local JSONL audit still captures everything.
-            pass
+            logger.warning("On-chain audit failed for event '%s' — local JSONL still recorded", event_type)

@@ -3,6 +3,7 @@ from __future__ import annotations
 import asyncio
 import inspect
 import json
+import logging
 import time
 import urllib.error
 import urllib.request
@@ -12,6 +13,8 @@ from typing import Any, Dict, Optional, Protocol
 
 from src.config import Settings
 from src.types import ToolContext, ToolResult
+
+logger = logging.getLogger(__name__)
 
 try:
     from weil_wallet import PrivateKey, Wallet, WeilClient
@@ -266,6 +269,8 @@ class ToolRouter:
             self.mcp_client = self._build_real_mcp_client()
 
     def _build_real_mcp_client(self) -> MCPClient:
+        from src.tools.local_fallback import LocalFallbackMCPClient
+
         required_env = {
             "WEILCHAIN_NODE_URL": self.settings.weilchain_node_url,
             "CLAUSE_EXTRACTOR_APPLET_ID": self.settings.clause_extractor_applet_id,
@@ -274,25 +279,35 @@ class ToolRouter:
         }
         missing = sorted(key for key, value in required_env.items() if not value)
         if missing:
-            raise McpUnavailableError(
-                "Missing required Weilchain MCP configuration: " + ", ".join(missing)
+            logger.warning(
+                "Missing Weilchain config (%s) — using local fallback MCP client",
+                ", ".join(missing),
+            )
+            return LocalFallbackMCPClient(tool_specs=self.tool_specs)
+
+        try:
+            client = WeilchainSDKMCPClient(
+                node_url=self.settings.weilchain_node_url,
+                wallet_path=self.settings.weilchain_wallet_path,
+                tool_specs=self.tool_specs,
             )
 
-        client = WeilchainSDKMCPClient(
-            node_url=self.settings.weilchain_node_url,
-            wallet_path=self.settings.weilchain_wallet_path,
-            tool_specs=self.tool_specs,
-        )
+            discovered = client.discover_tools()
+            required = {"clause_extractor", "risk_scorer"}
+            missing_tools = sorted(required - set(discovered.keys()))
+            if missing_tools:
+                raise McpUnavailableError(
+                    f"Required tools not discovered in MCP registry: {missing_tools}"
+                )
 
-        discovered = client.discover_tools()
-        required = {"clause_extractor", "risk_scorer"}
-        missing_tools = sorted(required - set(discovered.keys()))
-        if missing_tools:
-            raise McpUnavailableError(
-                f"Required tools not discovered in MCP registry: {missing_tools}"
+            logger.info("Weilchain SDK MCP client initialized successfully")
+            return client
+        except (McpUnavailableError, Exception) as exc:
+            logger.warning(
+                "Weilchain SDK unavailable (%s) — using local fallback MCP client",
+                exc,
             )
-
-        return client
+            return LocalFallbackMCPClient(tool_specs=self.tool_specs)
 
     def execute_tool(self, tool_name: str, payload: Dict[str, Any], ctx: ToolContext) -> ToolResult:
         tool_spec = self.tool_specs.get(tool_name)

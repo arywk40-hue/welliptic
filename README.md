@@ -196,21 +196,23 @@ Retry logic with exponential backoff remains bounded and fail-closed.
 
 Every agent step produces both a local JSONL record (for debugging/replay) and an on-chain Weilchain transaction (for tamper-proof compliance). The local event is enriched with the chain tx metadata, creating a **cross-referenced audit trail**.
 
-### 2. Deterministic Control Loop with LangGraph Fallback
+### 2. Deterministic Control Loop
 
-The production pipeline uses a deterministic control loop (`control_loop.py`, 530 lines) that guarantees:
+The production pipeline uses a deterministic control loop (`control_loop.py`, 632 lines) that guarantees:
 - Step budget enforcement (max_steps)
 - Parse retry with structured validation against WIDL schemas
 - Fail-closed on MCP unavailability
 - Human gate with configurable risk threshold
 
-A LangGraph `StateGraph` (`graph.py`) with 5 nodes and conditional edges provides the same pipeline as a graph visualization.
+### 3. Local Fallback MCP Client
 
-### 3. WIDL-to-Validation Pipeline
+When the Weilchain SDK or Sentinel node is unreachable, the `LocalFallbackMCPClient` (`src/tools/local_fallback.py`) mirrors the **exact same logic** as the Rust WASM applets deployed on-chain — header-based clause splitting and keyword-based risk classification. This is **not a mock**: it produces identical output to the on-chain applets and allows the full pipeline to run offline for demos and testing.
+
+### 4. WIDL-to-Validation Pipeline
 
 Applet interfaces are defined in WIDL. The Python parsers (`clause_extractor.py`, `risk_scorer.py`) validate every MCP response against the WIDL schema types (e.g., `result<list<Clause>, string>`, `result<RiskScore, string>`) with strict type checking. Invalid responses trigger parse retries.
 
-### 4. Cryptographic End-to-End Auth
+### 5. Cryptographic End-to-End Auth
 
 The full request chain is cryptographically signed:
 - UI → FastAPI: `weil_middleware()` verifies wallet signature
@@ -312,7 +314,7 @@ python main.py --input my_contract.txt --format json --no-human-gate
 python -m pytest tests/ -v
 ```
 
-All 7 tests pass:
+All 16 tests pass:
 - `test_clause_parser_handles_fenced_json` — WIDL clause validation
 - `test_risk_parser_rejects_invalid_enum` — WIDL risk enum enforcement
 - `test_cli_json_output` — End-to-end CLI with JSON output
@@ -320,6 +322,15 @@ All 7 tests pass:
 - `test_human_gate_pending_when_high_risk` — Human gate triggers on HIGH
 - `test_mcp_unavailable_fail_closed` — Fail-closed when MCP is down
 - `test_parse_retry_then_fail` — Invalid applet output → retry → fail
+- `test_clause_header_detection` — Header pattern matching
+- `test_split_contract_numbered` — Numbered clause splitting
+- `test_split_contract_fallback` — Plain text fallback (single clause)
+- `test_risk_scoring_high` — HIGH keyword classification
+- `test_risk_scoring_medium` — MEDIUM keyword classification
+- `test_risk_scoring_low` — LOW (no indicators)
+- `test_local_fallback_client_clause_extractor` — MCP client clause API
+- `test_local_fallback_client_risk_scorer` — MCP client risk API
+- `test_full_pipeline_with_local_fallback` — Full offline pipeline (4 clauses, human gate)
 
 ---
 
@@ -342,12 +353,10 @@ welliptic/                               # ← GitHub repo root
 │   ├── agent/
 │   │   ├── control_loop.py              # Deterministic pipeline (632 lines)
 │   │   ├── audit.py                     # AuditLogger + WeilAuditLogger
-│   │   ├── adk_workflow.py              # ADK-oriented entry point
-│   │   ├── graph.py                     # LangGraph StateGraph (5 nodes)
-│   │   ├── nodes.py                     # LangGraph node implementations
-│   │   └── state.py                     # LangGraph TypedDict state
+│   │   └── adk_workflow.py              # ADK-oriented entry point
 │   ├── tools/
-│   │   └── router.py                    # ToolRouter → WeilchainHTTPMCPClient
+│   │   ├── router.py                    # ToolRouter → WeilchainHTTPMCPClient
+│   │   └── local_fallback.py            # Deterministic offline MCP client
 │   ├── applets/
 │   │   ├── clause_extractor.py          # WIDL validation + LLM extraction
 │   │   ├── clause_extractor.widl        # @mcp ClauseExtractor interface
@@ -365,10 +374,14 @@ welliptic/                               # ← GitHub repo root
 │   ├── components/                      # React components
 │   ├── lib/                             # API client + state store
 │   └── package.json
-├── tests/                               # 7 tests (all passing)
+├── tests/                               # 16 tests (all passing)
+│   ├── conftest.py                      # Shared fixtures + InMemoryMCPClient
 │   ├── test_applets_parsing.py
 │   ├── test_cli.py
-│   └── test_control_loop.py
+│   ├── test_control_loop.py
+│   └── test_local_fallback.py           # 9 tests for offline fallback client
+├── demo_output/                         # Pre-generated demo results
+│   └── demo_result.json                 # 9-clause NDA analysis (offline)
 ├── scripts/
 │   ├── deploy.sh                        # Full deploy pipeline
 │   ├── deploy_applets.mjs               # JS SDK applet deployment

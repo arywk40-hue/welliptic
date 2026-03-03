@@ -81,6 +81,26 @@ dev: ## Start both API + UI (background API, foreground UI)
 demo: ## Run demo analysis on sample contract
 	$(PYTHON) main.py --input contracts/sample_nda.txt --format json --no-human-gate
 
+demo-offline: ## Run offline demo (no API keys needed) — uses local fallback MCP client
+	@echo "$(CYAN)→ Running offline demo with local fallback client...$(RESET)"
+	$(PYTHON) -c "\
+import json; from pathlib import Path; \
+from src.agent.control_loop import run_lexaudit; \
+from src.config import Settings; \
+from src.tools.router import ToolRouter, ToolSpec; \
+from src.tools.local_fallback import LocalFallbackMCPClient; \
+ct = Path('contracts/sample_nda.txt').read_text(); \
+s = Settings(anthropic_api_key='', runs_dir=Path('.runs'), enforce_mcp=True, max_retries=1, retry_backoff_seconds=0.0, weilchain_wallet_path='private_key.wc', weilchain_node_url='https://sentinel.unweil.me'); \
+specs = {'clause_extractor': ToolSpec(applet_id='aaaaaar6cc2arozt4ycprttocyc62p6sqwuyecuuqzjgdanbdiupplimxa', interface='ClauseExtractor', default_method='extract_clauses'), 'risk_scorer': ToolSpec(applet_id='aaaaaawmbew7e54girflltyb3ox76oyylr4f4tduu2unmzlmjyhnkhe5ba', interface='RiskScorer', default_method='score_clause_risk')}; \
+client = LocalFallbackMCPClient(tool_specs=specs); \
+router = ToolRouter(settings=s, mcp_client=client); \
+r = run_lexaudit(contract_text=ct, filename='sample_nda.txt', settings=s, router=router, human_gate_enabled=True, decision_provider=None); \
+Path('demo_output').mkdir(exist_ok=True); \
+Path('demo_output/demo_result.json').write_text(json.dumps(r.to_dict(), indent=2)); \
+print(f'✓ {len(r.state.clauses)} clauses, {len(r.state.risk_results)} risks, {len(r.audit_log)} audit events'); \
+[print(f'  [{x.risk_level.value:6}] {x.clause_title}') for x in r.state.risk_results]; \
+print(f'→ demo_output/demo_result.json')"
+
 # ─── Deploy ───────────────────────────────────────────────
 deploy: wasm ## Build WASM and deploy applets to Weilchain
 	@echo "$(YELLOW)→ Deploying applets to Weilchain...$(RESET)"

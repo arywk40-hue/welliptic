@@ -5,31 +5,7 @@ from pathlib import Path
 
 import main
 from src.tools.router import ToolRouter, ToolSpec
-
-
-class _InMemoryMCPClient:
-    """Test-only mock that mimics MCP tool dispatch in memory."""
-
-    def __init__(self, handlers: dict) -> None:
-        self.handlers = handlers
-
-    def is_available(self) -> bool:
-        return True
-
-    def discover_tools(self) -> dict:
-        return {
-            name: ToolSpec(applet_id=name, interface="InMemory", default_method=name)
-            for name in self.handlers
-        }
-
-    def call_tool(self, *, tool_name: str, method_name: str, payload: dict,
-                  timeout_seconds: float, tool_spec: ToolSpec) -> dict:
-        if tool_name not in self.handlers:
-            return {"ok": False, "error": f"tool {tool_name} not found"}
-        data = self.handlers[tool_name](payload)
-        if isinstance(data, dict) and "ok" in data:
-            return data
-        return {"ok": True, "data": data}
+from tests.conftest import InMemoryMCPClient
 
 
 def test_cli_json_output(monkeypatch, capsys, tmp_path) -> None:
@@ -55,7 +31,7 @@ def test_cli_json_output(monkeypatch, capsys, tmp_path) -> None:
         original_init(
             self,
             settings=settings,
-            mcp_client=_InMemoryMCPClient({"clause_extractor": clause_extractor, "risk_scorer": risk_scorer}),
+            mcp_client=InMemoryMCPClient({"clause_extractor": clause_extractor, "risk_scorer": risk_scorer}),
         )
 
     monkeypatch.setattr(ToolRouter, "__init__", patched_init)

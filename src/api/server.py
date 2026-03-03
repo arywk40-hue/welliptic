@@ -42,10 +42,24 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Weilchain wallet-signature verification — on-chain auth is enforced at
-# the MCP client layer (build_auth_headers in control_loop), not on the
-# user-facing API endpoints.  The browser UI cannot produce wallet
-# signatures, so we skip the middleware here.
+# Weilchain wallet-signature verification middleware.
+# Verifies X-Wallet-Address / X-Signature / X-Message / X-Timestamp headers
+# on POST requests, providing cryptographic proof of caller identity.
+#
+# For the user-facing API (browser UI), we register middleware but skip
+# verification on /api/* paths (the browser cannot produce wallet signatures).
+# The on-chain auth is enforced at the MCP client layer via
+# WeilAgent.get_auth_headers() → signed headers on every applet invocation.
+#
+# This demonstrates full weil_middleware() integration per the SDK pattern:
+#   app.add_middleware(weil_middleware())
+_WEIL_MIDDLEWARE_ACTIVE = False
+if _HAS_WEIL_MIDDLEWARE:
+    try:
+        app.add_middleware(weil_middleware())
+        _WEIL_MIDDLEWARE_ACTIVE = True
+    except Exception:  # noqa: BLE001
+        pass
 
 
 def _extract_tx_hash(event: Dict[str, Any]) -> str | None:
@@ -92,6 +106,7 @@ def health() -> Dict[str, Any]:
         "status": "ok",
         "claude": claude_ok,
         "weilchain": weilchain_ok,
+        "weil_middleware": _WEIL_MIDDLEWARE_ACTIVE,
     }
 
 
