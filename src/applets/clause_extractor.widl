@@ -1,0 +1,19 @@
+record Clause {
+    id: u32,
+    title: string,
+    text: string
+}
+
+@mcp
+interface ClauseExtractor {
+    // Extracts all distinct legal clauses from a contract text.
+    query func extract_clauses(
+        // full contract text to analyse
+        contract_text: string
+    ) -> result<list<Clause>, string>;
+
+    // Returns number of clauses found in a contract without full extraction.
+    query func count_clauses(
+        contract_text: string
+    ) -> result<u32, string>
+}

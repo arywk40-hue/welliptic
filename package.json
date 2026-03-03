@@ -1,0 +1,14 @@
+{
+  "name": "lexaudit-deploy",
+  "version": "1.0.0",
+  "private": true,
+  "description": "LexAudit — Weilchain applet deployment scripts",
+  "type": "module",
+  "scripts": {
+    "deploy": "node scripts/deploy_applets.mjs",
+    "check": "node -e \"import('@weilliptic/weil-sdk').then(()=>console.log('SDK OK'))\""
+  },
+  "dependencies": {
+    "@weilliptic/weil-sdk": "^1.1.1"
+  }
+}

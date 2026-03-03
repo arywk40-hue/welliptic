@@ -1,0 +1,40 @@
+# ============================================================
+#  LexAudit — Docker Compose (API + UI)
+# ============================================================
+
+services:
+  # --- FastAPI backend (port 8000) ---
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    environment:
+      - LEXAUDIT_HOST=0.0.0.0
+      - LEXAUDIT_PORT=8000
+    volumes:
+      - ./private_key.wc:/app/private_key.wc:ro
+      - ./.runs:/app/.runs
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+    restart: unless-stopped
+
+  # --- Next.js UI (port 3000) ---
+  ui:
+    build:
+      context: ./ui
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://api:8000
+    depends_on:
+      api:
+        condition: service_healthy
+    restart: unless-stopped

@@ -1,21 +1,30 @@
-# Agentic Framework
+# Agent runtime
+anthropic>=0.40.0
+python-dotenv>=1.0.0
+pydantic>=2.0.0
+
+# Weilchain SDK runtime (install from WADK repo)
+# pip install /path/to/wadk-sdk/adk/python/weil_wallet
+# pip install /path/to/wadk-sdk/adk/python/weil_ai
+weil-wallet>=0.1.0
+weil-ai>=0.1.0
+
+# Real deployment web server
+fastapi>=0.115.0
+uvicorn>=0.30.0
+
+# Optional legacy stack retained for reference modules
 langgraph>=0.2.0
 langchain>=0.3.0
 langchain-anthropic>=0.3.0
 
-# Weilchain SDK
-wadk                        # official Weilliptic SDK — verify pkg name on Discord
-
-# LLM Providers
-anthropic>=0.40.0
-
-# PDF Processing
+# PDF processing
 pypdf>=4.0.0
 pdfplumber>=0.11.0
 
-# UI
+# UI (out of v1 core scope but retained)
 streamlit>=1.40.0
 
-# Utilities
-python-dotenv>=1.0.0
-pydantic>=2.0.0
+# Testing
+pytest>=8.0.0
+pytest-asyncio>=1.0.0

@@ -1,0 +1,35 @@
+record RiskFlag {
+    code: string,
+    description: string
+}
+
+record Clause {
+    id: u32,
+    title: string,
+    text: string
+}
+
+record RiskScore {
+    clause_id: u32,
+    clause_title: string,
+    risk_level: string,
+    confidence: string,
+    reason: string,
+    flags: list<RiskFlag>
+}
+
+@mcp
+interface RiskScorer {
+    // Scores a single legal clause for risk level (LOW, MEDIUM, HIGH).
+    query func score_clause_risk(
+        // the clause object to score
+        clause_id: u32,
+        clause_title: string,
+        clause_text: string
+    ) -> result<RiskScore, string>;
+
+    // Scores all clauses in a batch and returns ordered results.
+    query func score_all_clauses(
+        contract_text: string
+    ) -> result<list<RiskScore>, string>
+}

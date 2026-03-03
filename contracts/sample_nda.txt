@@ -1,0 +1,80 @@
+NON-DISCLOSURE AGREEMENT
+
+This Non-Disclosure Agreement ("Agreement") is entered into as of March 1, 2026, by and between:
+
+Party A: TechCorp Inc., a Delaware corporation ("Disclosing Party")
+Party B: StartupLabs LLC, a California limited liability company ("Receiving Party")
+
+1. DEFINITIONS
+
+1.1 "Confidential Information" means any and all non-public information, whether written, oral, electronic, or visual, disclosed by the Disclosing Party to the Receiving Party, including but not limited to: trade secrets, business plans, financial data, customer lists, technical specifications, source code, algorithms, and proprietary methodologies.
+
+1.2 "Representatives" means the Receiving Party's officers, directors, employees, agents, advisors, and contractors who have a need to know the Confidential Information.
+
+2. OBLIGATIONS OF RECEIVING PARTY
+
+2.1 The Receiving Party shall hold all Confidential Information in strict confidence and shall not disclose such information to any third party without the prior written consent of the Disclosing Party.
+
+2.2 The Receiving Party shall use the Confidential Information solely for the purpose of evaluating a potential business relationship between the parties ("Permitted Purpose").
+
+2.3 The Receiving Party shall protect the Confidential Information using at least the same degree of care it uses to protect its own confidential information, but in no event less than reasonable care.
+
+3. TERM AND TERMINATION
+
+3.1 This Agreement shall remain in effect for a period of three (3) years from the date of execution.
+
+3.2 Either party may terminate this Agreement at any time upon thirty (30) days' prior written notice to the other party. However, the obligations of confidentiality shall survive termination for an additional period of five (5) years.
+
+4. INDEMNIFICATION
+
+4.1 The Receiving Party shall indemnify and hold harmless the Disclosing Party from any and all losses, damages, claims, expenses, and attorneys' fees arising from or related to any breach of this Agreement by the Receiving Party or its Representatives.
+
+4.2 The Receiving Party's total liability under this Agreement shall not exceed $10,000,000 (ten million dollars), except in cases of willful misconduct or gross negligence.
+
+5. INTELLECTUAL PROPERTY
+
+5.1 Nothing in this Agreement shall be construed as granting the Receiving Party any rights or license to the Disclosing Party's intellectual property, including patents, copyrights, trademarks, or trade secrets.
+
+5.2 Any improvements, modifications, or derivative works created by the Receiving Party using Confidential Information shall be the sole and exclusive property of the Disclosing Party.
+
+6. NON-COMPETE AND NON-SOLICITATION
+
+6.1 During the term of this Agreement and for a period of two (2) years thereafter, the Receiving Party shall not directly or indirectly compete with the Disclosing Party in any market where the Disclosing Party conducts business.
+
+6.2 The Receiving Party shall not solicit, hire, or attempt to hire any employee of the Disclosing Party during the term of this Agreement and for one (1) year following termination.
+
+7. GOVERNING LAW AND DISPUTE RESOLUTION
+
+7.1 This Agreement shall be governed by and construed in accordance with the laws of the State of Delaware, without regard to its conflict of laws principles.
+
+7.2 Any dispute arising under this Agreement shall be resolved through binding arbitration administered by the American Arbitration Association in Wilmington, Delaware.
+
+7.3 The prevailing party in any arbitration or litigation shall be entitled to recover its reasonable attorneys' fees and costs.
+
+8. LIMITATION OF LIABILITY
+
+8.1 IN NO EVENT SHALL EITHER PARTY BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, OR PUNITIVE DAMAGES ARISING OUT OF OR RELATED TO THIS AGREEMENT.
+
+8.2 The Disclosing Party makes no warranties regarding the accuracy or completeness of the Confidential Information provided hereunder.
+
+9. GENERAL PROVISIONS
+
+9.1 This Agreement constitutes the entire agreement between the parties and supersedes all prior negotiations, representations, and agreements relating to the subject matter hereof.
+
+9.2 This Agreement may not be amended or modified except by a written instrument signed by both parties.
+
+9.3 If any provision of this Agreement is found to be invalid or unenforceable, the remaining provisions shall continue in full force and effect.
+
+9.4 This Agreement may be executed in counterparts, each of which shall be deemed an original.
+
+IN WITNESS WHEREOF, the parties have executed this Agreement as of the date first written above.
+
+_______________________
+TechCorp Inc.
+By: [Authorized Signatory]
+Date: March 1, 2026
+
+_______________________
+StartupLabs LLC
+By: [Authorized Signatory]
+Date: March 1, 2026

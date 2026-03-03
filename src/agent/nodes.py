@@ -190,7 +190,7 @@ def generate_report_node(state: AgentState) -> AgentState:
 ╚══════════════════════════════════════════════╝
 
 File:      {state['filename']}
-Decision:  {state.get('human_decision', 'AUTO-APPROVED').upper()}
+Decision:  {(state.get('human_decision') or 'AUTO-APPROVED').upper()}
 Steps:     {state['step_index']} agent steps logged
 
 RISK SUMMARY

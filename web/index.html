@@ -1,0 +1,576 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>LexAudit // Real Deployment</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Syne:wght@400;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg-0: #05060d;
+        --bg-1: #0b1220;
+        --glass: rgba(9, 14, 26, 0.55);
+        --glass-border: rgba(148, 163, 184, 0.2);
+        --text: #e6f1ff;
+        --muted: #93a5c7;
+        --purple: #9a6bff;
+        --cyan: #37d8ff;
+        --green: #43ff9f;
+        --warn: #ffcb6b;
+        --danger: #ff6f86;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: "JetBrains Mono", monospace;
+        color: var(--text);
+        background: radial-gradient(1200px 600px at 15% -10%, #111a34 0%, transparent 70%),
+          radial-gradient(1000px 500px at 90% 0%, #1a1235 0%, transparent 70%), var(--bg-0);
+        min-height: 100vh;
+        overflow-x: hidden;
+      }
+
+      .mesh,
+      .mesh::before,
+      .mesh::after {
+        position: fixed;
+        inset: -20%;
+        content: "";
+        pointer-events: none;
+        z-index: -1;
+        filter: blur(70px);
+      }
+
+      .mesh {
+        background: radial-gradient(circle at 20% 30%, rgba(154, 107, 255, 0.35), transparent 40%),
+          radial-gradient(circle at 70% 35%, rgba(55, 216, 255, 0.25), transparent 35%),
+          radial-gradient(circle at 55% 75%, rgba(67, 255, 159, 0.2), transparent 30%);
+        animation: drift 16s ease-in-out infinite alternate;
+      }
+
+      .mesh::before {
+        background: radial-gradient(circle at 80% 80%, rgba(154, 107, 255, 0.2), transparent 45%),
+          radial-gradient(circle at 30% 85%, rgba(55, 216, 255, 0.2), transparent 45%);
+        animation: drift 20s ease-in-out infinite alternate-reverse;
+      }
+
+      .mesh::after {
+        background: radial-gradient(circle at 45% 20%, rgba(67, 255, 159, 0.18), transparent 40%),
+          radial-gradient(circle at 20% 60%, rgba(154, 107, 255, 0.2), transparent 45%);
+        animation: drift 22s linear infinite;
+      }
+
+      @keyframes drift {
+        from {
+          transform: translate3d(0, 0, 0) scale(1);
+        }
+        to {
+          transform: translate3d(4%, -2%, 0) scale(1.08);
+        }
+      }
+
+      .container {
+        width: min(1200px, 92vw);
+        margin: 24px auto 40px;
+      }
+
+      .title {
+        font-family: "Syne", sans-serif;
+        font-size: clamp(2rem, 4vw, 3.4rem);
+        line-height: 1.05;
+        margin: 0;
+        letter-spacing: 0.02em;
+      }
+
+      .subtitle {
+        margin-top: 10px;
+        color: var(--muted);
+        max-width: 78ch;
+        font-size: 0.95rem;
+      }
+
+      .grid {
+        margin-top: 24px;
+        display: grid;
+        grid-template-columns: 1.3fr 1fr;
+        gap: 16px;
+      }
+
+      .panel {
+        background: var(--glass);
+        border: 1px solid var(--glass-border);
+        border-radius: 18px;
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05), 0 20px 30px rgba(0, 0, 0, 0.25);
+        padding: 16px;
+      }
+
+      label {
+        display: block;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: #a9b8d9;
+        margin-bottom: 8px;
+      }
+
+      textarea,
+      input,
+      select {
+        width: 100%;
+        background: rgba(7, 12, 24, 0.7);
+        color: var(--text);
+        border: 1px solid rgba(148, 163, 184, 0.25);
+        border-radius: 12px;
+        padding: 10px 12px;
+        font-family: "JetBrains Mono", monospace;
+      }
+
+      textarea {
+        min-height: 220px;
+        resize: vertical;
+      }
+
+      .row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        margin-top: 12px;
+      }
+
+      .cta {
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        margin-top: 14px;
+        padding: 12px 16px;
+        border-radius: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.28);
+        color: #08111f;
+        background: linear-gradient(120deg, var(--purple), var(--cyan), var(--green));
+        background-size: 220% 220%;
+        font-family: "Syne", sans-serif;
+        font-weight: 700;
+        font-size: 1rem;
+        cursor: pointer;
+        overflow: hidden;
+        transition: transform 0.18s ease;
+        animation: gradientShift 5s ease infinite;
+      }
+
+      .cta:disabled {
+        opacity: 0.65;
+        cursor: not-allowed;
+      }
+
+      .cta::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -40%;
+        width: 38%;
+        height: 100%;
+        background: linear-gradient(
+          105deg,
+          transparent 0%,
+          rgba(255, 255, 255, 0.2) 40%,
+          rgba(255, 255, 255, 0.6) 50%,
+          rgba(255, 255, 255, 0.2) 60%,
+          transparent 100%
+        );
+        transform: skewX(-20deg);
+        animation: shimmer 2.2s linear infinite;
+      }
+
+      @keyframes gradientShift {
+        0% {
+          background-position: 0% 50%;
+        }
+        50% {
+          background-position: 100% 50%;
+        }
+        100% {
+          background-position: 0% 50%;
+        }
+      }
+
+      @keyframes shimmer {
+        from {
+          left: -50%;
+        }
+        to {
+          left: 120%;
+        }
+      }
+
+      .feed-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        max-height: 320px;
+        overflow: auto;
+      }
+
+      .feed-item {
+        display: grid;
+        grid-template-columns: 14px 1fr auto;
+        gap: 10px;
+        align-items: center;
+        padding: 10px;
+        border-radius: 10px;
+        background: rgba(10, 18, 32, 0.66);
+        border: 1px solid rgba(148, 163, 184, 0.18);
+      }
+
+      .dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 999px;
+        box-shadow: 0 0 16px currentColor;
+      }
+
+      .dot.spin {
+        width: 12px;
+        height: 12px;
+        border: 2px solid currentColor;
+        border-top-color: transparent;
+        background: transparent;
+        border-radius: 999px;
+        animation: spin 0.9s linear infinite;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      .status-ok {
+        color: var(--green);
+      }
+
+      .status-pending {
+        color: var(--warn);
+      }
+
+      .status-error {
+        color: var(--danger);
+      }
+
+      .mono {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.78rem;
+        color: #b5c7e6;
+      }
+
+      .summary-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(90px, 1fr));
+        gap: 8px;
+      }
+
+      .kpi {
+        padding: 10px;
+        border-radius: 10px;
+        background: rgba(7, 14, 28, 0.72);
+        border: 1px solid rgba(148, 163, 184, 0.15);
+      }
+
+      .kpi .label {
+        color: #9cb0d4;
+        font-size: 0.72rem;
+      }
+
+      .kpi .value {
+        font-family: "Syne", sans-serif;
+        font-size: 1.35rem;
+        margin-top: 2px;
+      }
+
+      details {
+        border-radius: 10px;
+        border: 1px solid rgba(148, 163, 184, 0.22);
+        background: rgba(8, 13, 24, 0.6);
+        margin-top: 8px;
+      }
+
+      summary {
+        cursor: pointer;
+        padding: 10px;
+        font-size: 0.82rem;
+      }
+
+      .audit-card {
+        padding: 10px;
+        border-top: 1px solid rgba(148, 163, 184, 0.12);
+        color: #c8d7f4;
+        font-size: 0.8rem;
+      }
+
+      .audit-link {
+        color: var(--cyan);
+        text-decoration: none;
+      }
+
+      .error {
+        margin-top: 10px;
+        color: #ffd2da;
+        background: rgba(255, 86, 121, 0.14);
+        border: 1px solid rgba(255, 111, 134, 0.35);
+        padding: 8px 10px;
+        border-radius: 10px;
+      }
+
+      @media (max-width: 960px) {
+        .grid {
+          grid-template-columns: 1fr;
+        }
+        .row {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="mesh"></div>
+    <div id="root"></div>
+
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/prop-types@15/prop-types.min.js"></script>
+    <script src="https://unpkg.com/recharts@2.12.7/umd/Recharts.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <script type="text/babel">
+      const {
+        BarChart,
+        Bar,
+        Cell,
+        XAxis,
+        YAxis,
+        Tooltip,
+        ResponsiveContainer,
+        CartesianGrid,
+      } = Recharts;
+
+      const SAMPLE = ``;
+
+      const statusClass = (event) => {
+        if (!event) return "status-pending";
+        if (event.status === "error") return "status-error";
+        if (event.status === "pending") return "status-pending";
+        return "status-ok";
+      };
+
+      function App() {
+        const [contractText, setContractText] = React.useState(SAMPLE);
+        const [filename, setFilename] = React.useState("live_contract.txt");
+        const [threshold, setThreshold] = React.useState("HIGH");
+        const [loading, setLoading] = React.useState(false);
+        const [error, setError] = React.useState("");
+        const [result, setResult] = React.useState(null);
+        const [feedIndex, setFeedIndex] = React.useState(0);
+
+        const runAnalysis = async () => {
+          setLoading(true);
+          setError("");
+          setResult(null);
+          setFeedIndex(0);
+
+          try {
+            const res = await fetch("/api/analyze", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                contract_text: contractText,
+                filename,
+                max_steps: 60,
+                human_gate_threshold: threshold,
+              }),
+            });
+
+            const payload = await res.json();
+            if (!res.ok) {
+              if (payload?.detail?.report_json) {
+                throw new Error(`Analysis failed: ${payload.detail.terminate_reason || "unknown error"}`);
+              }
+              throw new Error(payload.detail || "Failed to analyze contract");
+            }
+
+            setResult(payload);
+          } catch (err) {
+            setError(err.message || String(err));
+          } finally {
+            setLoading(false);
+          }
+        };
+
+        React.useEffect(() => {
+          if (!result?.audit_log?.length) return;
+          if (feedIndex >= result.audit_log.length) return;
+          const t = setTimeout(() => setFeedIndex((n) => n + 1), 280);
+          return () => clearTimeout(t);
+        }, [result, feedIndex]);
+
+        const feed = result?.audit_log?.slice(0, feedIndex) || [];
+        const summary = result?.report_json?.summary || { high: 0, medium: 0, low: 0, total_clauses: 0 };
+
+        const chartData = [
+          { label: "HIGH", value: summary.high, fill: "#ff6f86" },
+          { label: "MEDIUM", value: summary.medium, fill: "#ffcb6b" },
+          { label: "LOW", value: summary.low, fill: "#43ff9f" },
+        ];
+
+        return (
+          <div className="container">
+            <h1 className="title">LexAudit Neural Console</h1>
+            <div className="subtitle">
+              Real deployment mode: this UI calls the live Weilchain MCP route at <span className="mono">/api/analyze</span>.
+              Every clause extraction and risk score is executed on-chain via Weilchain applets.
+            </div>
+
+            <div className="grid">
+              <section className="panel">
+                <label>Contract Text</label>
+                <textarea value={contractText} onChange={(e) => setContractText(e.target.value)} />
+                <div className="row">
+                  <div>
+                    <label>Filename</label>
+                    <input value={filename} onChange={(e) => setFilename(e.target.value)} />
+                  </div>
+                  <div>
+                    <label>Risk Threshold</label>
+                    <select value={threshold} onChange={(e) => setThreshold(e.target.value)}>
+                      <option value="LOW">LOW</option>
+                      <option value="MEDIUM">MEDIUM</option>
+                      <option value="HIGH">HIGH</option>
+                    </select>
+                  </div>
+                </div>
+                <button className="cta" disabled={loading} onClick={runAnalysis}>
+                  {loading ? "Running Real MCP Analysis..." : "Run Real Weilchain Audit"}
+                </button>
+                {error && <div className="error">{error}</div>}
+              </section>
+
+              <section className="panel">
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
+                  <strong style={{ fontFamily: "Syne", fontSize: "1.1rem" }}>Live Agent Feed</strong>
+                  <span className="mono">{feed.length} events</span>
+                </div>
+                <ul className="feed-list">
+                  {feed.map((event, idx) => {
+                    const cls = statusClass(event);
+                    const isLast = idx === feed.length - 1 && (loading || feedIndex < (result?.audit_log?.length || 0));
+                    return (
+                      <li key={`${event.step_index}-${event.event_type}-${idx}`} className="feed-item">
+                        <span className={`dot ${isLast ? "spin" : ""} ${cls}`}></span>
+                        <div>
+                          <div>{event.event_type}</div>
+                          <div className="mono">node={event.node} | step={event.step_index}</div>
+                        </div>
+                        <div className={`mono ${cls}`}>{event.status}</div>
+                      </li>
+                    );
+                  })}
+                  {!feed.length && (
+                    <li className="feed-item">
+                      <span className="dot spin status-pending"></span>
+                      <div>Awaiting execution...</div>
+                      <div className="mono">idle</div>
+                    </li>
+                  )}
+                </ul>
+              </section>
+            </div>
+
+            <div className="grid">
+              <section className="panel">
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
+                  <strong style={{ fontFamily: "Syne", fontSize: "1.1rem" }}>Risk Distribution</strong>
+                  <span className="mono">Recharts</span>
+                </div>
+                <div className="summary-grid" style={{ marginBottom: 12 }}>
+                  <div className="kpi"><div className="label">HIGH</div><div className="value">{summary.high}</div></div>
+                  <div className="kpi"><div className="label">MEDIUM</div><div className="value">{summary.medium}</div></div>
+                  <div className="kpi"><div className="label">LOW</div><div className="value">{summary.low}</div></div>
+                  <div className="kpi"><div className="label">CLAUSES</div><div className="value">{summary.total_clauses}</div></div>
+                </div>
+                <div style={{ width: "100%", height: 280 }}>
+                  <ResponsiveContainer>
+                    <BarChart data={chartData}>
+                      <CartesianGrid stroke="rgba(130,150,190,0.2)" strokeDasharray="4 4" />
+                      <XAxis dataKey="label" stroke="#8ea3c7" />
+                      <YAxis stroke="#8ea3c7" allowDecimals={false} />
+                      <Tooltip
+                        contentStyle={{
+                          background: "rgba(7, 12, 24, 0.92)",
+                          border: "1px solid rgba(148,163,184,0.3)",
+                          borderRadius: "10px",
+                          color: "#e6f1ff",
+                        }}
+                      />
+                      <Bar dataKey="value" radius={[8, 8, 0, 0]}>
+                        {chartData.map((entry) => (
+                          <Cell key={entry.label} fill={entry.fill} />
+                        ))}
+                      </Bar>
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+              </section>
+
+              <section className="panel">
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
+                  <strong style={{ fontFamily: "Syne", fontSize: "1.1rem" }}>Audit Trail</strong>
+                  <span className="mono">session={result?.session_id || "n/a"}</span>
+                </div>
+
+                {(result?.audit_log || []).map((event, idx) => (
+                  <details key={`audit-${idx}`}>
+                    <summary>
+                      [{event.step_index}] {event.event_type} <span className={`mono ${statusClass(event)}`}>({event.status})</span>
+                    </summary>
+                    <div className="audit-card">
+                      <div>node: <span className="mono">{event.node}</span></div>
+                      <div>input: <span className="mono">{event.input_hash || "-"}</span></div>
+                      <div>output: <span className="mono">{event.output_hash || "-"}</span></div>
+                      <div>tx hash: <span className="mono">{event.tx_hash || "not emitted"}</span></div>
+                      <div>
+                        Weilchain link: {event.weilchain_link ? (
+                          <a className="audit-link" href={event.weilchain_link} target="_blank" rel="noreferrer">
+                            open transaction
+                          </a>
+                        ) : (
+                          <span className="mono"> unavailable</span>
+                        )}
+                      </div>
+                      {event.error && <div className="status-error">error: {event.error}</div>}
+                    </div>
+                  </details>
+                ))}
+              </section>
+            </div>
+          </div>
+        );
+      }
+
+      ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+    </script>
+  </body>
+</html>

@@ -1,0 +1,10 @@
+[workspace]
+members = ["clause_extractor", "risk_scorer"]
+resolver = "2"
+
+[workspace.dependencies]
+weil_rs = { path = "../../wadk-sdk/adk/rust/weil_rs/" }
+weil_macros = { path = "../../wadk-sdk/adk/rust/weil_rs/weil_macros" }
+weil_contracts = { path = "../../wadk-sdk/adk/rust/weil_rs/weil_contracts" }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"

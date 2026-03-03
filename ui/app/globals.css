@@ -1,0 +1,122 @@
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@300;400;500;700&family=DM+Sans:wght@300;400;500&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --void:   #04060F;
+  --cyan:   #00F5FF;
+  --volt:   #8AFF00;
+  --pink:   #FF2D78;
+  --violet: #9B5CF6;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  background: var(--void);
+  color: #E8EAF0;
+  font-family: 'DM Sans', sans-serif;
+  overflow-x: hidden;
+}
+
+/* ── Scrollbar ─────────────────────────────── */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(155,92,246,0.4); border-radius: 2px; }
+
+/* ── Glass panel ───────────────────────────── */
+.glass {
+  background: rgba(255,255,255,0.03);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255,255,255,0.07);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.06);
+}
+
+.glass-strong {
+  background: rgba(255,255,255,0.06);
+  backdrop-filter: blur(40px);
+  -webkit-backdrop-filter: blur(40px);
+  border: 1px solid rgba(255,255,255,0.10);
+  box-shadow: 0 16px 48px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.10);
+}
+
+/* ── Gradient text ─────────────────────────── */
+.grad-cyan   { background: linear-gradient(135deg, #00F5FF, #0080FF); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+.grad-volt   { background: linear-gradient(135deg, #8AFF00, #00F5FF); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+.grad-pink   { background: linear-gradient(135deg, #FF2D78, #9B5CF6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+.grad-full   { background: linear-gradient(135deg, #9B5CF6, #00F5FF, #8AFF00); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+
+/* ── Glow borders ──────────────────────────── */
+.border-glow-cyan   { box-shadow: 0 0 0 1px rgba(0,245,255,0.3), 0 0 20px rgba(0,245,255,0.15); }
+.border-glow-violet { box-shadow: 0 0 0 1px rgba(155,92,246,0.3), 0 0 20px rgba(155,92,246,0.15); }
+.border-glow-pink   { box-shadow: 0 0 0 1px rgba(255,45,120,0.3), 0 0 20px rgba(255,45,120,0.15); }
+.border-glow-volt   { box-shadow: 0 0 0 1px rgba(138,255,0,0.3), 0 0 20px rgba(138,255,0,0.15); }
+
+/* ── Shimmer button ────────────────────────── */
+.btn-shimmer {
+  background: linear-gradient(90deg, rgba(155,92,246,0.8) 0%, rgba(0,245,255,0.8) 50%, rgba(155,92,246,0.8) 100%);
+  background-size: 200% auto;
+  animation: shimmer 2.5s linear infinite;
+  transition: all 0.3s ease;
+}
+.btn-shimmer:hover { transform: translateY(-2px); box-shadow: 0 0 40px rgba(0,245,255,0.4); }
+
+/* ── Scan line ─────────────────────────────── */
+.scanline::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(transparent 40%, rgba(0,245,255,0.03) 50%, transparent 60%);
+  animation: scan 4s linear infinite;
+  pointer-events: none;
+}
+
+/* ── Risk badges ───────────────────────────── */
+.risk-high   { background: rgba(255,45,120,0.15); border: 1px solid rgba(255,45,120,0.4); color: #FF2D78; }
+.risk-medium { background: rgba(255,165,0,0.15);  border: 1px solid rgba(255,165,0,0.4);  color: #FFA500; }
+.risk-low    { background: rgba(138,255,0,0.15);  border: 1px solid rgba(138,255,0,0.4);  color: #8AFF00; }
+
+/* ── Progress bar ──────────────────────────── */
+.progress-bar {
+  background: linear-gradient(90deg, #9B5CF6, #00F5FF);
+  box-shadow: 0 0 10px rgba(0,245,255,0.5);
+  transition: width 0.5s ease;
+}
+
+/* ── Drag drop zone ────────────────────────── */
+.drop-active {
+  border-color: rgba(0,245,255,0.8) !important;
+  background: rgba(0,245,255,0.05) !important;
+  box-shadow: 0 0 40px rgba(0,245,255,0.2) !important;
+}
+
+/* ── Noise overlay ─────────────────────────── */
+.noise::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.4;
+}
+
+@keyframes shimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position:  200% center; }
+}
+@keyframes scan {
+  0%   { transform: translateY(-100%); }
+  100% { transform: translateY(500%); }
+}
+@keyframes float {
+  0%,100% { transform: translateY(0px); }
+  50%     { transform: translateY(-8px); }
+}
+@keyframes pulse-ring {
+  0%   { transform: scale(0.8); opacity: 1; }
+  100% { transform: scale(2.0); opacity: 0; }
+}

@@ -1,0 +1,9 @@
+{
+  "pythonVersion": "3.13",
+  "pythonPlatform": "Darwin",
+  "venvPath": "/Users/ariyanbhakat/miniconda3",
+  "venv": ".",
+  "extraPaths": ["."],
+  "reportMissingImports": "warning",
+  "reportMissingModuleSource": "none"
+}

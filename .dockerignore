@@ -1,0 +1,13 @@
+.git
+.env
+.runs/
+.pytest_cache/
+__pycache__/
+node_modules/
+rust_applets/target/
+*.wc
+.DS_Store
+.vscode/
+docs/
+tests/
+*.md

@@ -1,72 +1,104 @@
-# main.py
-import os
+from __future__ import annotations
+
+import argparse
+import json
+import sys
+from pathlib import Path
+from typing import List
+
 from dotenv import load_dotenv
-from src.agent.graph import build_graph
 
-load_dotenv()
+# Ensure local `src` package is importable for both script and module execution.
+ROOT = Path(__file__).resolve().parent
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
 
-SAMPLE_CONTRACT = """
-CONSULTING AGREEMENT
+from src.agent.adk_workflow import run_adk_workflow
+from src.config import load_settings
+from src.tools.router import McpUnavailableError, ToolRouter
+from src.types import RiskScore
 
-1. Services
-Consultant agrees to provide software development services to Client.
 
-2. Payment
-Client shall pay Consultant $500/hour with no upper limit on total hours billed.
-Invoices must be paid within 3 days or a 25% penalty applies.
+def _load_text(input_arg: str) -> tuple[str, str]:
+    """Load contract text from a file path or stdin. Input is required."""
+    if input_arg == "-":
+        return sys.stdin.read(), "stdin.txt"
+    if not input_arg:
+        raise ValueError("--input is required: provide a contract file path or '-' for stdin")
+    path = Path(input_arg)
+    if not path.exists():
+        raise FileNotFoundError(f"Contract file not found: {path}")
+    return path.read_text(encoding="utf-8"), path.name
 
-3. Intellectual Property
-All work product created by Consultant remains the exclusive property of Consultant.
-Client receives a limited, revocable license only.
 
-4. Non-Compete
-Consultant shall not work for any company in any industry for 10 years
-after termination of this agreement worldwide.
+def _interactive_decision(risks: List[RiskScore]) -> str:
+    print("\nHUMAN REVIEW REQUIRED")
+    for item in risks:
+        print(f"- [{item.clause_title}] {item.reason}")
+    decision = input("Approve contract? (approve/reject): ").strip().lower()
+    if decision not in {"approve", "reject"}:
+        return "reject"
+    return decision
 
-5. Liability
-Client assumes full liability for any damages arising from use of deliverables.
-Consultant liability is unlimited and survives contract termination.
 
-6. Termination
-Either party may terminate with 24 hours notice. No compensation owed on termination.
-"""
+def main() -> int:
+    parser = argparse.ArgumentParser(description="LexAudit v1 (ADK-oriented loop + MCP tools)")
+    parser.add_argument("--serve", action="store_true", help="Start FastAPI server on port 8000")
+    parser.add_argument("--input", default="", help="Contract file path (required) or '-' for stdin")
+    parser.add_argument("--format", default="text", choices=["text", "json"])
+    parser.add_argument("--max-steps", type=int, default=50)
+    parser.add_argument("--human-gate-threshold", default="HIGH", choices=["LOW", "MEDIUM", "HIGH"])
+    parser.add_argument("--no-human-gate", action="store_true")
+    args = parser.parse_args()
 
-def main():
-    print("🏛️  LexAudit — AI Legal Contract Reviewer")
-    print("=" * 50)
+    load_dotenv()
 
-    graph = build_graph()
+    if args.serve:
+        import uvicorn
 
-    initial_state = {
-        "contract_text":        SAMPLE_CONTRACT,
-        "filename":             "sample_consulting_agreement.txt",
-        "clauses":              [],
-        "current_clause_index": 0,
-        "risk_results":         [],
-        "step_index":           0,
-        "max_steps":            50,
-        "fatal_error":          False,
-        "error_message":        None,
-        "human_gate_open":      False,
-        "human_decision":       None,
-        "final_report":         None,
-        "session_id":           None,
-        "audit_log":            []
-    }
+        uvicorn.run("src.api.server:app", host="0.0.0.0", port=8000, reload=False)
+        return 0
 
-    result = graph.invoke(initial_state)
+    settings = load_settings()
 
-    print("\n" + result["final_report"])
-    print(f"\n📋 Full audit log: {len(result['audit_log'])} entries captured")
+    try:
+        contract_text, filename = _load_text(args.input)
+    except Exception as exc:  # noqa: BLE001
+        print(f"Failed to load input: {exc}", file=sys.stderr)
+        return 2
+
+    try:
+        router = ToolRouter(settings=settings)
+    except McpUnavailableError as exc:
+        print(f"MCP bootstrap failed: {exc}", file=sys.stderr)
+        return 1
+
+    try:
+        result = run_adk_workflow(
+            contract_text,
+            filename,
+            max_steps=args.max_steps,
+            human_gate_threshold=args.human_gate_threshold,
+            settings=settings,
+            router=router,
+            human_gate_enabled=not args.no_human_gate,
+            decision_provider=_interactive_decision if not args.no_human_gate else None,
+        )
+    except McpUnavailableError as exc:
+        print(f"MCP unavailable: {exc}", file=sys.stderr)
+        return 1
+
+    if args.format == "json":
+        print(json.dumps(result.to_dict(), indent=2, ensure_ascii=True))
+    else:
+        print(result.report_text or "")
+        print(f"Session: {result.session_id}")
+        print(f"Audit events: {len(result.audit_log)}")
+
+    if result.state.fatal_error:
+        return 1
+    return 0
+
 
 if __name__ == "__main__":
-    main()
-```
-
----
-
-## ▶️ Step 6 — Add API Key & Run!
-
-In your `.env` file:
-```
-ANTHROPIC_API_KEY=your_key_here
+    raise SystemExit(main())

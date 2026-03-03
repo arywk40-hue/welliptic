@@ -1,0 +1,38 @@
+# ─── Secrets ──────────────────────────────────
+.env
+private_key.wc
+*.wc
+
+# ─── Python ───────────────────────────────────
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+*.egg-info/
+dist/
+build/
+*.egg
+.mypy_cache/
+.pyright/
+
+# ─── Runtime / Logs ──────────────────────────
+.runs/
+
+# ─── Rust ─────────────────────────────────────
+rust_applets/target/
+
+# ─── Node / JS ───────────────────────────────
+node_modules/
+.next/
+out/
+
+# ─── OS ──────────────────────────────────────
+.DS_Store
+Thumbs.db
+*.swp
+*~
+
+# ─── IDE ─────────────────────────────────────
+.idea/
+*.code-workspace
+.vscode/

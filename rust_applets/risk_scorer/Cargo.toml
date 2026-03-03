@@ -1,0 +1,14 @@
+[package]
+name = "risk_scorer"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+serde = { workspace = true }
+serde_json = { workspace = true }
+weil_rs = { workspace = true }
+weil_macros = { workspace = true }
+weil_contracts = { workspace = true }
