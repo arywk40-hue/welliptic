@@ -1,0 +1,21 @@
+MUTUAL NON-DISCLOSURE AGREEMENT
+
+This Mutual Non-Disclosure Agreement ("Agreement") is entered into as of the Effective Date between the parties identified below ("Disclosing Party" and "Receiving Party").
+
+1. Confidentiality
+
+The Receiving Party agrees to keep all Confidential Information strictly confidential and to not disclose any Confidential Information to any third party without the prior written consent of the Disclosing Party. "Confidential Information" means any and all information or data that has or could have commercial value or other utility in the business in which Disclosing Party is engaged. This obligation of confidentiality shall survive termination of this Agreement and shall continue indefinitely with respect to all Confidential Information disclosed hereunder.
+
+2. Non-Compete
+
+For a period of 10 years worldwide, the Receiving Party shall not, directly or indirectly, engage in, own, manage, operate, control, be employed by, provide services to, participate in, or be connected with any business or activity that competes with the Disclosing Party's business. This restriction is irrevocable and perpetual with respect to any Confidential Information that constitutes trade secrets under applicable law. The Receiving Party acknowledges that these restrictions are reasonable and necessary to protect the legitimate business interests of the Disclosing Party.
+
+3. Indemnification
+
+The Receiving Party shall indemnify, defend, and hold harmless the Disclosing Party and its affiliates, officers, directors, employees, and agents from and against any and all claims, damages, losses, costs, and expenses (including reasonable attorneys' fees) arising out of or relating to any breach of this Agreement by the Receiving Party. There shall be no liability cap on the indemnification obligations set forth herein, and the Receiving Party expressly waives any right to limit its indemnification obligations.
+
+4. Term
+
+This Agreement shall remain in effect for 2 years from the Effective Date, unless earlier terminated by either party upon 30 days' written notice to the other party. Upon termination, the Receiving Party shall promptly return or destroy all Confidential Information in its possession or control.
+
+IN WITNESS WHEREOF, the parties have executed this Agreement as of the date first written above.
