@@ -1,38 +1,57 @@
-# ─── Secrets ──────────────────────────────────
+# ─── Secrets & credentials ───────────────────
 .env
 private_key.wc
 *.wc
 
-# ─── Python ───────────────────────────────────
+# ─── Python ──────────────────────────────────
 __pycache__/
-*.pyc
+*.py[cod]
 *.pyo
-.pytest_cache/
+*.pyd
+.Python
+*.egg
 *.egg-info/
 dist/
 build/
-*.egg
+.eggs/
+.venv/
+venv/
+env/
+pip-wheel-metadata/
+.pytest_cache/
 .mypy_cache/
 .pyright/
+htmlcov/
+.coverage
+*.cover
 
-# ─── Runtime / Logs ──────────────────────────
+# ─── Audit run data ──────────────────────────
 .runs/
 
-# ─── Rust ─────────────────────────────────────
-rust_applets/target/
-
-# ─── Node / JS ───────────────────────────────
+# ─── Node / Next.js ──────────────────────────
 node_modules/
-.next/
-out/
+ui/node_modules/
+ui/.next/
+ui/out/
+ui/build/
+.npm/
+
+# ─── Rust / WASM ─────────────────────────────
+target/
+rust_applets/target/
+rust_applets/*/target/
+*.wasm.bak
+
+# ─── Docker ──────────────────────────────────
+.docker/
 
 # ─── OS ──────────────────────────────────────
 .DS_Store
 Thumbs.db
 *.swp
-*~
+*.swo
 
-# ─── IDE ─────────────────────────────────────
+# ─── IDEs ────────────────────────────────────
 .idea/
-*.code-workspace
 .vscode/
+*.iml
