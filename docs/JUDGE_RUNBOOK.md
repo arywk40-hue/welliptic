@@ -12,7 +12,7 @@ make check          # Verify env, imports, tests — all in one
 make demo-offline   # Run offline analysis on sample contract (no API needed)
 make serve          # Start API on :8000
 # (new terminal)
-make demo           # Run analysis on sample contract (needs Anthropic key)
+make demo           # Run analysis on sample contract (uses Groq LLM)
 ```
 
 ---
@@ -25,6 +25,18 @@ make demo           # Run analysis on sample contract (needs Anthropic key)
 | `.env` configured | `cat .env` (see `.env.example`) |
 | `private_key.wc` exists | `ls private_key.wc` |
 | Weilchain SDK installed | `python3 -c "from weil_ai import WeilAgent; print('OK')"` |
+
+### LLM Provider (Priority Order)
+
+LexAudit auto-selects the best available LLM:
+
+| Priority | Provider | Env Vars | Model |
+|---|---|---|---|
+| 1 (fastest) | **Groq** ← recommended | `USE_GROQ=true` + `GROQ_API_KEY` | `llama-3.3-70b-versatile` |
+| 2 | Gemini | `USE_GEMINI=true` + `GEMINI_API_KEY` | `gemini-2.0-flash` |
+| 3 | OpenAI | `USE_OPENAI=true` + `OPENAI_API_KEY` | `gpt-4o` |
+| 4 | Anthropic | `ANTHROPIC_API_KEY` | `claude-opus-4-1` |
+| fallback | Deterministic | (none needed) | keyword heuristics |
 
 ## 2) Environment Check
 
@@ -64,12 +76,14 @@ Expected: **16/16 tests pass**:
 make demo-offline
 ```
 
-This runs the **full pipeline** using the `LocalFallbackMCPClient` — a deterministic client that mirrors the exact same logic as the on-chain Rust WASM applets (header-based clause splitting + keyword-based risk scoring). No Anthropic API key, no Weilchain node needed.
+This runs the **full pipeline** using the `LocalFallbackMCPClient` — a deterministic client that mirrors the exact same logic as the on-chain Rust WASM applets (header-based clause splitting + keyword-based risk scoring). No LLM API key, no Weilchain node needed.
+
+When an LLM is configured (Groq recommended), the LocalFallback **automatically delegates** to the AI-powered functions, producing genuine LLM-driven clause analysis and risk scoring.
 
 Expected output:
-- 9 clauses extracted from sample NDA
-- 9 risk scores (MEDIUM and LOW)
-- 35 audit events (local JSONL)
+- 9+ clauses extracted from sample NDA
+- 9+ risk scores (with LLM: nuanced HIGH/MEDIUM/LOW; without: keyword-based)
+- 35+ audit events (local JSONL)
 - Result saved to `demo_output/demo_result.json`
 
 A **pre-generated** demo result is also committed at `demo_output/demo_result.json` for instant review.
@@ -86,7 +100,16 @@ Verify:
 curl http://localhost:8000/api/health | python3 -m json.tool
 ```
 
-Expected: `{"status": "ok", "claude": true, "weilchain": true, "weil_middleware": true}`
+Expected:
+```json
+{
+  "status": "ok",
+  "llm": true,
+  "llm_provider": "groq",
+  "weilchain": true,
+  "weil_middleware": true
+}
+```
 
 ## 6) Run CLI Analysis
 
@@ -95,7 +118,7 @@ python main.py --input contracts/sample_nda.txt --format json --no-human-gate
 ```
 
 Expected:
-- Clause extraction + risk scoring complete
+- Clause extraction + risk scoring complete (powered by Groq LLM)
 - Session ID printed
 - Audit events logged to `.runs/`
 
@@ -149,14 +172,18 @@ Both deployed and **Finalized** on Weilchain (block ~3879551).
 |---|---|---|
 | **Agentic framework** (LangGraph-compatible) | `src/agent/control_loop.py` | 632 |
 | **Custom control loop** | `src/agent/control_loop.py` | 632 |
-| **Weilchain audit logging** | `src/agent/audit.py` | 207 |
-| **MCP applet execution** | `src/tools/router.py` | 400 |
-| **Local fallback (offline demo)** | `src/tools/local_fallback.py` | 230 |
+| **Multi-LLM support** (Groq/Gemini/OpenAI/Anthropic) | `src/applets/clause_extractor.py`, `risk_scorer.py` | — |
+| **LLM-enhanced fallback** | `src/tools/local_fallback.py` | 300+ |
+| **Weilchain audit logging** | `src/agent/audit.py` | 262 |
+| **MCP applet execution** | `src/tools/router.py` | 520 |
+| **Auto-fallback (offline + online)** | `src/tools/router.py`, `local_fallback.py` | — |
 | **WIDL interfaces** | `src/applets/*.widl` | 53 |
 | **Rust WASM applets** | `rust_applets/*/src/lib.rs` | 284 |
 | **weil_ai SDK** (WeilAgent, middleware, auth) | `src/agent/audit.py`, `src/api/server.py` | — |
 | **weil_wallet SDK** (WeilClient, contracts) | `src/tools/router.py` | — |
 | **Human-in-the-loop gate** | `src/agent/control_loop.py:_node_human_gate` | ~30 |
 | **Fail-closed behavior** | `src/tools/router.py`, tests | — |
-| **Dual audit trail** (local JSONL + on-chain) | `src/agent/audit.py` | 207 |
+| **Dual audit trail** (local JSONL + on-chain) | `src/agent/audit.py` | 262 |
 | **Cryptographic auth** (wallet signatures) | `src/agent/audit.py:get_auth_headers()` | — |
+| **Next.js UI** (Upload → Analysis → Review → Report) | `ui/` | 5 screens |
+| **FastAPI server** | `src/api/server.py` | 210 |

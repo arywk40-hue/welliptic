@@ -40,7 +40,7 @@ function ClauseRow({ score }: { score: RiskScore }) {
         <div className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: RISK_COLOR[score.risk_level] }} />
         <span className="flex-1 font-body text-white/80 text-sm">{score.clause_title}</span>
         <RiskBadge level={score.risk_level} />
-        <span className="text-white/20 text-xs font-mono">{(parseFloat(score.confidence) * 100).toFixed(0)}%</span>
+        <span className="text-white/20 text-xs font-mono">{(parseFloat(String(score.confidence)) * 100).toFixed(0)}%</span>
         {open ? <ChevronUp className="w-4 h-4 text-white/20" /> : <ChevronDown className="w-4 h-4 text-white/20" />}
       </button>
       {open && (
@@ -172,7 +172,7 @@ ${result.audit_events.length} events logged on Weilchain
           { icon: <Hash className="w-4 h-4 text-violet-400" />,  label: 'Session', value: result.session_id },
           { icon: <FileText className="w-4 h-4 text-cyan-400" />, label: 'Clauses', value: `${result.clauses.length} found` },
           { icon: <Clock className="w-4 h-4 text-amber-400" />,  label: 'Audit Events', value: `${result.audit_events.length} logged` },
-          { icon: <Link className="w-4 h-4 text-volt" />,         label: 'Tx Hash', value: result.tx_hash?.slice(0, 10) + '...' ?? 'pending' },
+          { icon: <Link className="w-4 h-4 text-volt" />,         label: 'Tx Hash', value: result.tx_hash ? result.tx_hash.slice(0, 10) + '...' : 'pending' },
         ].map(m => (
           <div key={m.label}>
             <div className="flex items-center gap-2 mb-1">{m.icon}<span className="text-white/30 text-xs font-mono">{m.label}</span></div>

@@ -64,7 +64,7 @@ lint: ## Run type checking
 # ─── Run ──────────────────────────────────────────────────
 serve: ## Start FastAPI server (port 8000)
 	@echo "$(CYAN)→ Starting LexAudit API on http://localhost:8000$(RESET)"
-	$(UVICORN) src.api.server:app --host 0.0.0.0 --port 8000 --reload
+	$(PYTHON) server.py
 
 ui: ## Start Next.js UI dev server (port 3000)
 	@echo "$(CYAN)→ Starting LexAudit UI on http://localhost:3000$(RESET)"
@@ -72,7 +72,7 @@ ui: ## Start Next.js UI dev server (port 3000)
 
 dev: ## Start both API + UI (background API, foreground UI)
 	@echo "$(CYAN)→ Starting API server in background...$(RESET)"
-	$(UVICORN) src.api.server:app --host 0.0.0.0 --port 8000 &
+	$(PYTHON) server.py &
 	@sleep 2
 	@echo "$(CYAN)→ Starting UI...$(RESET)"
 	cd ui && $(NPM) run dev
@@ -122,7 +122,8 @@ docker-down: ## Stop Docker Compose
 check: ## Verify environment and deployed applets
 	@echo "$(CYAN)Checking environment...$(RESET)"
 	@$(PYTHON) -c "from dotenv import load_dotenv; load_dotenv(); from src.config import load_settings; s = load_settings(); \
-		print('  Anthropic API key:', '✓' if s.anthropic_api_key else '✗'); \
+		llm = 'groq' if s.use_groq and s.groq_api_key else 'gemini' if s.use_gemini and s.gemini_api_key else 'openai' if s.use_openai and s.openai_api_key else 'anthropic' if s.anthropic_api_key else 'none'; \
+		print('  LLM provider:     ', llm, '✓' if llm != 'none' else '✗'); \
 		print('  Weilchain node:   ', s.weilchain_node_url or '✗'); \
 		print('  ClauseExtractor:  ', s.clause_extractor_applet_id[:20]+'...' if s.clause_extractor_applet_id else '✗'); \
 		print('  RiskScorer:       ', s.risk_scorer_applet_id[:20]+'...' if s.risk_scorer_applet_id else '✗'); \

@@ -115,8 +115,46 @@ class WeilAuditLogger:
         self.enabled = False
         self._agent: Any = None
         self._wallet: Any = None
+        self._wallet_address: Optional[str] = None
         self.tx_results: List[Dict[str, Any]] = []
         self._initialize()
+
+    @staticmethod
+    def _resolve_wallet_address(wallet: Any) -> Optional[str]:
+        """Extract a hex wallet address string from a ``Wallet`` object.
+
+        The ``weil_wallet.Wallet`` SDK does **not** expose a ``.address``
+        attribute.  The canonical path is::
+
+            wallet.get_public_key()          # → coincurve.PublicKey
+                  .format(compressed=True)   # → bytes (33 bytes)
+                  .hex()                     # → hex string
+
+        We try multiple strategies so this never crashes even if the SDK
+        changes its API surface.
+        """
+        strategies: list[tuple[str, Any]] = [
+            # Strategy 1 (canonical): compressed public key hex
+            ("get_public_key().format().hex()",
+             lambda w: w.get_public_key().format(compressed=True).hex()),
+            # Strategy 2: uncompressed public key hex
+            ("get_public_key().format(False).hex()",
+             lambda w: w.get_public_key().format(compressed=False).hex()),
+            # Strategy 3: maybe a future .address property
+            ("address", lambda w: w.address),
+            # Strategy 4: maybe a future .get_address() method
+            ("get_address()", lambda w: w.get_address()),
+            # Strategy 5: repr/str fallback
+            ("repr()", lambda w: repr(w)),
+        ]
+        for label, fn in strategies:
+            try:
+                result = fn(wallet)
+                if isinstance(result, str) and len(result) > 10:
+                    return result
+            except Exception:  # noqa: BLE001
+                continue
+        return None
 
     def _initialize(self) -> None:
         if not _HAS_WEIL_SDK:
@@ -130,27 +168,82 @@ class WeilAuditLogger:
             pk = PrivateKey.from_file(key_path)
             self._wallet = Wallet(pk)
 
+            # Resolve the wallet address safely (never crashes).
+            self._wallet_address = self._resolve_wallet_address(self._wallet)
+            if self._wallet_address:
+                logger.info("Weil wallet address: %s…", self._wallet_address[:16])
+            else:
+                logger.warning("Could not resolve wallet address — continuing without it")
+
             # Create a lightweight sentinel object that WeilAgent will wrap.
             # WeilAgent proxies all Weil-specific calls (audit, get_auth_headers)
             # while forwarding everything else to this inner object.
+            #
+            # NOTE: The SDK internally accesses attributes like ``pod_counter``
+            # on the inner agent.  We provide them as no-op defaults so the
+            # proxy never raises ``AttributeError: 'str' object has no
+            # attribute 'pod_counter'`` (which happens when a bare string is
+            # passed instead of an object).
             class _LexAuditSentinel:
                 """Inner agent identity for the LexAudit on-chain auditor."""
                 name = "lexaudit-auditor"
+                # Attributes that WeilAgent may probe on the inner object:
+                pod_counter = 0
+                pods = []
+                model = None
+                tools = []
 
-            self._agent = WeilAgent(
-                _LexAuditSentinel(),
-                wallet=self._wallet,
-            )
-            self.enabled = True
+            sentinel = _LexAuditSentinel()
+
+            # Try multiple WeilAgent constructor signatures — the SDK has
+            # changed across versions.
+            agent: Any = None
+            init_strategies: list[tuple[str, Any]] = [
+                ("WeilAgent(sentinel, wallet=wallet)",
+                 lambda: WeilAgent(sentinel, wallet=self._wallet)),
+                ("WeilAgent(sentinel, self._wallet)",
+                 lambda: WeilAgent(sentinel, self._wallet)),
+                ("WeilAgent(sentinel)",
+                 lambda: WeilAgent(sentinel)),
+            ]
+            for label, factory in init_strategies:
+                try:
+                    agent = factory()
+                    logger.info("WeilAgent created via %s", label)
+                    break
+                except Exception as exc:  # noqa: BLE001
+                    logger.debug(
+                        "WeilAgent init strategy '%s' failed: %s (%s)",
+                        label, type(exc).__name__, exc,
+                    )
+                    continue
+
+            if agent is not None:
+                self._agent = agent
+                self.enabled = True
+            else:
+                logger.warning(
+                    "All WeilAgent init strategies failed — on-chain audit disabled "
+                    "(local JSONL still active)"
+                )
         except Exception as exc:  # noqa: BLE001
             self.enabled = False
             self._agent = None
-            logger.warning("WeilAuditLogger initialization failed: %s", exc)
+            logger.warning(
+                "WeilAuditLogger initialization failed: %s (%s) — "
+                "on-chain audit disabled, local JSONL still active",
+                type(exc).__name__, exc,
+            )
 
     @property
     def wallet(self) -> Any:
         """Return the underlying Wallet, or None if not enabled."""
         return self._wallet
+
+    @property
+    def wallet_address(self) -> Optional[str]:
+        """Return the hex wallet address, or None if unavailable."""
+        return self._wallet_address
 
     def get_auth_headers(self) -> Dict[str, str]:
         """Return signed auth headers for MCP requests.
@@ -200,12 +293,22 @@ class WeilAuditLogger:
             self.tx_results.append(
                 {
                     "event_type": event_type,
-                    "status": str(result.status),
-                    "block_height": result.block_height,
-                    "batch_id": result.batch_id,
+                    "status": str(getattr(result, "status", "unknown")),
+                    "block_height": getattr(result, "block_height", None),
+                    "batch_id": getattr(result, "batch_id", None),
                     "tx_hash": tx_hash,
                 }
             )
-        except Exception:  # noqa: BLE001
+        except AttributeError as exc:
+            # SDK object-model mismatch (e.g. 'str' has no attribute 'pod_counter')
+            logger.debug(
+                "On-chain audit AttributeError for '%s': %s — "
+                "this is expected if the SDK inner agent shape changed",
+                event_type, exc,
+            )
+        except Exception as exc:  # noqa: BLE001
             # Fail open — local JSONL audit still captures everything.
-            logger.warning("On-chain audit failed for event '%s' — local JSONL still recorded", event_type)
+            logger.debug(
+                "On-chain audit failed for event '%s': %s (%s) — local JSONL still recorded",
+                event_type, type(exc).__name__, exc,
+            )

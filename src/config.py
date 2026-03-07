@@ -8,7 +8,17 @@ from pathlib import Path
 @dataclass
 class Settings:
     anthropic_api_key: str
+    openai_api_key: str = ""
+    gemini_api_key: str = ""
+    groq_api_key: str = ""
+    # Model config — priority: Groq > Gemini > OpenAI > Anthropic
     anthropic_model: str = "claude-opus-4-1"
+    openai_model: str = "gpt-4o"
+    gemini_model: str = "gemini-2.0-flash"
+    groq_model: str = "llama-3.3-70b-versatile"
+    use_openai: bool = False
+    use_gemini: bool = False
+    use_groq: bool = False  # Set USE_GROQ=true in .env (highest priority)
     max_retries: int = 2
     retry_backoff_seconds: float = 0.3
     runs_dir: Path = Path(".runs")
@@ -24,7 +34,16 @@ class Settings:
 def load_settings() -> Settings:
     return Settings(
         anthropic_api_key=os.getenv("ANTHROPIC_API_KEY", ""),
+        openai_api_key=os.getenv("OPENAI_API_KEY", ""),
+        gemini_api_key=os.getenv("GEMINI_API_KEY", ""),
+        groq_api_key=os.getenv("GROQ_API_KEY", ""),
         anthropic_model=os.getenv("ANTHROPIC_MODEL", "claude-opus-4-1"),
+        openai_model=os.getenv("OPENAI_MODEL", "gpt-4o"),
+        gemini_model=os.getenv("GEMINI_MODEL", "gemini-2.0-flash"),
+        groq_model=os.getenv("GROQ_MODEL", "llama-3.3-70b-versatile"),
+        use_openai=os.getenv("USE_OPENAI", "false").lower() in {"1", "true", "yes"},
+        use_gemini=os.getenv("USE_GEMINI", "false").lower() in {"1", "true", "yes"},
+        use_groq=os.getenv("USE_GROQ", "false").lower() in {"1", "true", "yes"},
         max_retries=int(os.getenv("LEXAUDIT_MAX_RETRIES", "2")),
         retry_backoff_seconds=float(os.getenv("LEXAUDIT_RETRY_BACKOFF", "0.3")),
         runs_dir=Path(os.getenv("LEXAUDIT_RUNS_DIR", ".runs")),

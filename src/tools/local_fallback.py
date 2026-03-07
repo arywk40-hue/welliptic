@@ -4,23 +4,30 @@ When the Weilchain Sentinel or SDK is unreachable, this client executes the
 same clause-extraction and risk-scoring algorithms that the on-chain Rust
 applets use, so the full pipeline still works end-to-end.
 
-The local logic mirrors ``rust_applets/clause_extractor/src/lib.rs`` and
-``rust_applets/risk_scorer/src/lib.rs`` exactly:
+**LLM-enhanced mode**: When a real LLM (Groq / Gemini / OpenAI) is available
+(detected via env vars), the local client delegates to the AI-powered
+``extract_clauses()`` and ``score_clause_risk()`` functions, producing
+genuine AI-driven analysis instead of keyword heuristics.
+
+The deterministic logic mirrors ``rust_applets/clause_extractor/src/lib.rs``
+and ``rust_applets/risk_scorer/src/lib.rs`` exactly and is used as the
+ultimate fallback when *no* LLM provider is reachable:
 
 - Clause extraction: header-based structural splitting (numbered lines).
 - Risk scoring: keyword-based classification with HIGH/MEDIUM keyword lists.
-
-This is NOT a mock — it produces the same deterministic output as the deployed
-WASM contracts.
 """
 
 from __future__ import annotations
 
 import json
+import logging
+import os
 import re
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 from src.tools.router import ToolSpec
+
+logger = logging.getLogger(__name__)
 
 
 # ── Clause Extraction (mirrors clause_extractor/src/lib.rs) ──────────────
@@ -190,14 +197,36 @@ def _score_single(clause_id: int, clause_title: str, clause_text: str) -> Dict[s
     }
 
 
+# ── LLM availability probe ────────────────────────────────────────────────
+
+
+def _llm_available() -> bool:
+    """Return True when at least one LLM provider has valid config.
+
+    Checked in priority order: Groq > Gemini > OpenAI > Anthropic.
+    """
+    if os.getenv("USE_GROQ", "").lower() in {"1", "true", "yes"} and os.getenv("GROQ_API_KEY"):
+        return True
+    if os.getenv("USE_GEMINI", "").lower() in {"1", "true", "yes"} and os.getenv("GEMINI_API_KEY"):
+        return True
+    if os.getenv("USE_OPENAI", "").lower() in {"1", "true", "yes"} and os.getenv("OPENAI_API_KEY"):
+        return True
+    if os.getenv("ANTHROPIC_API_KEY"):
+        return True
+    return False
+
+
 # ── MCP Client ───────────────────────────────────────────────────────────
 
 
 class LocalFallbackMCPClient:
     """Deterministic local MCP client that mirrors the on-chain WASM applets.
 
-    Falls back to this when ``WeilchainSDKMCPClient`` cannot connect to the
-    Sentinel node.  Produces identical output to the deployed Rust contracts.
+    When a real LLM is available (Groq / Gemini / OpenAI / Anthropic), this
+    client **delegates** to the AI-powered extraction and scoring functions,
+    producing the same quality output as if the Weilchain Sentinel were
+    reachable.  When no LLM is configured it falls back to the deterministic
+    keyword/header heuristics that mirror the deployed Rust contracts.
     """
 
     def __init__(self, tool_specs: Dict[str, ToolSpec]) -> None:
@@ -225,12 +254,20 @@ class LocalFallbackMCPClient:
         else:
             return {"ok": False, "error": f"Unknown tool: {tool_name}"}
 
+    # ── Clause Extraction ────────────────────────────────────────────────
+
     def _handle_clause_extractor(self, method: str, payload: Dict[str, Any]) -> Dict[str, Any]:
         contract_text = payload.get("contract_text", "")
         if not contract_text.strip():
             return {"ok": False, "error": "contract_text cannot be empty"}
 
         if method == "extract_clauses":
+            # Try real LLM first
+            if _llm_available():
+                try:
+                    return self._llm_extract_clauses(contract_text)
+                except Exception as exc:  # noqa: BLE001
+                    logger.warning("LLM clause extraction failed (%s) — falling back to deterministic", exc)
             clauses = _split_contract(contract_text)
             return {"ok": True, "result": {"Ok": clauses}}
         elif method == "count_clauses":
@@ -239,6 +276,23 @@ class LocalFallbackMCPClient:
         else:
             return {"ok": False, "error": f"Unknown method: {method}"}
 
+    def _llm_extract_clauses(self, contract_text: str) -> Dict[str, Any]:
+        """Delegate clause extraction to the LLM-powered function."""
+        from src.applets.clause_extractor import extract_clauses
+        from src.types import ToolContext
+
+        ctx = ToolContext(
+            session_id="local-fallback",
+            model=os.getenv("GROQ_MODEL", "llama-3.3-70b-versatile"),
+            prompt_template_id="contract_clause_extract_v1",
+        )
+        clauses = extract_clauses(contract_text, ctx)
+        result = [{"id": c.id, "title": c.title, "text": c.text} for c in clauses]
+        logger.info("LLM clause extraction returned %d clauses", len(result))
+        return {"ok": True, "result": {"Ok": result}}
+
+    # ── Risk Scoring ─────────────────────────────────────────────────────
+
     def _handle_risk_scorer(self, method: str, payload: Dict[str, Any]) -> Dict[str, Any]:
         if method == "score_clause_risk":
             clause_id = payload.get("clause_id", 0)
@@ -246,6 +300,14 @@ class LocalFallbackMCPClient:
             clause_text = payload.get("clause_text", "")
             if not clause_text.strip():
                 return {"ok": False, "error": "clause_text cannot be empty"}
+
+            # Try real LLM first
+            if _llm_available():
+                try:
+                    return self._llm_score_clause(clause_id, clause_title, clause_text)
+                except Exception as exc:  # noqa: BLE001
+                    logger.warning("LLM risk scoring failed (%s) — falling back to deterministic", exc)
+
             result = _score_single(clause_id, clause_title, clause_text)
             return {"ok": True, "result": {"Ok": result}}
         elif method == "score_all_clauses":
@@ -259,3 +321,26 @@ class LocalFallbackMCPClient:
             return {"ok": True, "result": {"Ok": results}}
         else:
             return {"ok": False, "error": f"Unknown method: {method}"}
+
+    def _llm_score_clause(self, clause_id: int, clause_title: str, clause_text: str) -> Dict[str, Any]:
+        """Delegate risk scoring to the LLM-powered function."""
+        from src.applets.risk_scorer import score_clause_risk
+        from src.types import Clause, ToolContext
+
+        ctx = ToolContext(
+            session_id="local-fallback",
+            model=os.getenv("GROQ_MODEL", "llama-3.3-70b-versatile"),
+            prompt_template_id="contract_risk_score_v1",
+        )
+        clause = Clause(id=clause_id, title=clause_title, text=clause_text)
+        risk = score_clause_risk(clause, ctx)
+        result = {
+            "clause_id": risk.clause_id,
+            "clause_title": risk.clause_title,
+            "risk_level": risk.risk_level.value,
+            "confidence": str(risk.confidence),
+            "reason": risk.reason,
+            "flags": [{"code": f.split(":")[0].strip(), "description": f.split(":", 1)[-1].strip()} for f in risk.flags] if risk.flags else [],
+        }
+        logger.info("LLM risk score for clause %d: %s", clause_id, risk.risk_level.value)
+        return {"ok": True, "result": {"Ok": result}}

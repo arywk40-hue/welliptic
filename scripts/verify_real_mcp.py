@@ -19,10 +19,17 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 REQUIRED_VARS = [
-    "ANTHROPIC_API_KEY",
     "WEILCHAIN_NODE_URL",
     "CLAUSE_EXTRACTOR_APPLET_ID",
     "RISK_SCORER_APPLET_ID",
+]
+
+# At least one LLM provider must be configured
+LLM_GROUPS = [
+    ("USE_GROQ", "GROQ_API_KEY"),
+    ("USE_GEMINI", "GEMINI_API_KEY"),
+    ("USE_OPENAI", "OPENAI_API_KEY"),
+    ("ANTHROPIC_API_KEY",),
 ]
 
 
@@ -32,6 +39,24 @@ def check_env() -> None:
         print(f"Missing env vars: {missing}")
         print("Set these in .env before running real MCP verification")
         sys.exit(1)
+
+    # Check that at least one LLM provider is configured
+    has_llm = False
+    for group in LLM_GROUPS:
+        if len(group) == 1:
+            if os.getenv(group[0]):
+                has_llm = True
+                break
+        else:
+            flag, key = group
+            if os.getenv(flag, "").lower() in {"1", "true", "yes"} and os.getenv(key):
+                has_llm = True
+                break
+    if not has_llm:
+        print("WARNING: No LLM provider configured — will use deterministic fallback")
+    else:
+        print("LLM provider: configured ✓")
+
     print("All env vars present")
 
 

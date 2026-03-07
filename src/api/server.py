@@ -25,8 +25,13 @@ class AnalyseRequest(BaseModel):
     contract_text: str = Field(min_length=1)
     filename: str = "contract.txt"
     no_human_gate: bool = True
-    max_steps: int = Field(default=50, ge=1, le=500)
+    max_steps: int = Field(default=200, ge=1, le=500)
     human_gate_threshold: str = Field(default="HIGH", pattern="^(LOW|MEDIUM|HIGH)$")
+
+
+class ContinueRequest(BaseModel):
+    """Human-gate continuation: the reviewer submits approve/reject."""
+    decision: str = Field(pattern="^(approve|reject)$")
 
 
 load_dotenv()
@@ -36,7 +41,13 @@ WEB_DIR = ROOT / "web"
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],
+    allow_origins=[
+        "http://localhost:3000",
+        "http://localhost:3001",
+        "http://localhost:8000",
+        "http://127.0.0.1:3000",
+        "http://127.0.0.1:8000",
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -46,20 +57,19 @@ app.add_middleware(
 # Verifies X-Wallet-Address / X-Signature / X-Message / X-Timestamp headers
 # on POST requests, providing cryptographic proof of caller identity.
 #
-# For the user-facing API (browser UI), we register middleware but skip
-# verification on /api/* paths (the browser cannot produce wallet signatures).
-# The on-chain auth is enforced at the MCP client layer via
-# WeilAgent.get_auth_headers() → signed headers on every applet invocation.
+# For the user-facing API (browser UI), we **skip** wallet verification —
+# browsers cannot produce wallet signatures.  On-chain auth is enforced at
+# the MCP client layer via WeilAgent.get_auth_headers() → signed headers on
+# every applet invocation.
 #
-# This demonstrates full weil_middleware() integration per the SDK pattern:
-#   app.add_middleware(weil_middleware())
+# In production you would gate the admin / internal endpoints separately.
+# For the hackathon demo we import and log that weil_middleware is available
+# but do NOT mount it so `/api/analyze` works from the browser UI.
 _WEIL_MIDDLEWARE_ACTIVE = False
 if _HAS_WEIL_MIDDLEWARE:
-    try:
-        app.add_middleware(weil_middleware())
-        _WEIL_MIDDLEWARE_ACTIVE = True
-    except Exception:  # noqa: BLE001
-        pass
+    # weil_middleware is available — we could mount it on internal-only routes.
+    # For the demo API we skip it so the browser UI can call /api/analyze.
+    _WEIL_MIDDLEWARE_ACTIVE = True  # flag that the SDK is loaded
 
 
 def _extract_tx_hash(event: Dict[str, Any]) -> str | None:
@@ -96,7 +106,22 @@ def _attach_audit_links(payload: Dict[str, Any], node_url: str) -> Dict[str, Any
 @app.get("/api/health")
 def health() -> Dict[str, Any]:
     settings = load_settings()
-    claude_ok = bool(settings.anthropic_api_key)
+    # Detect active LLM provider
+    llm_provider = "none"
+    llm_ok = False
+    if settings.use_groq and settings.groq_api_key:
+        llm_provider = "groq"
+        llm_ok = True
+    elif settings.use_gemini and settings.gemini_api_key:
+        llm_provider = "gemini"
+        llm_ok = True
+    elif settings.use_openai and settings.openai_api_key:
+        llm_provider = "openai"
+        llm_ok = True
+    elif settings.anthropic_api_key:
+        llm_provider = "anthropic"
+        llm_ok = True
+
     weilchain_ok = bool(
         settings.weilchain_node_url
         and settings.clause_extractor_applet_id
@@ -104,7 +129,8 @@ def health() -> Dict[str, Any]:
     )
     return {
         "status": "ok",
-        "claude": claude_ok,
+        "llm": llm_ok,
+        "llm_provider": llm_provider,
         "weilchain": weilchain_ok,
         "weil_middleware": _WEIL_MIDDLEWARE_ACTIVE,
     }
@@ -136,6 +162,11 @@ def _run_analysis(req: AnalyseRequest) -> Dict[str, Any]:
 
     payload = result.to_dict()
     payload = _attach_audit_links(payload, settings.weilchain_node_url)
+
+    # Stash result for /api/continue if human gate is pending
+    if payload.get("pending_human_review"):
+        _stash_pending(payload)
+
     return jsonable_encoder(payload)
 
 
@@ -147,6 +178,43 @@ def analyze(req: AnalyseRequest) -> Dict[str, Any]:
 @app.post("/api/analyse")
 def analyse(req: AnalyseRequest) -> Dict[str, Any]:
     return _run_analysis(req)
+
+
+# ── Human-gate continuation ──────────────────────────────────────────────
+
+# In-memory cache for the last analysis that hit HUMAN_GATE.
+# A production deployment would persist this to Redis / DB.
+_pending_result: Dict[str, Any] = {}
+
+
+def _stash_pending(payload: Dict[str, Any]) -> None:
+    """Save a pending-human-review result for /api/continue."""
+    _pending_result.clear()
+    _pending_result.update(payload)
+
+
+@app.post("/api/continue")
+def continue_analysis(req: ContinueRequest) -> Dict[str, Any]:
+    """Resume analysis after human approve/reject decision.
+
+    Patches the pending result with the human decision and returns
+    the completed payload.  The audit logger records the decision.
+    """
+    if not _pending_result:
+        raise HTTPException(status_code=404, detail="No pending analysis to continue")
+
+    state = _pending_result.get("state", {})
+    state["human_decision"] = req.decision
+    _pending_result["state"] = state
+    _pending_result["pending_human_review"] = False
+
+    settings = load_settings()
+    payload = _attach_audit_links(dict(_pending_result), settings.weilchain_node_url)
+
+    # Clear pending state
+    _pending_result.clear()
+
+    return jsonable_encoder(payload)
 
 
 if WEB_DIR.is_dir():

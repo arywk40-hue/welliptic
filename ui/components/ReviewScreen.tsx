@@ -1,49 +1,33 @@
 'use client'
 import { useState } from 'react'
 import { AlertTriangle, CheckCircle, XCircle, Eye, ChevronDown, ChevronUp } from 'lucide-react'
-import { useApp } from '@/lib/store'
+import { useApp, RiskScore } from '@/lib/store'
 import { completeAnalysis } from '@/lib/api'
 
-const MOCK_HIGH_RISK = [
-  {
-    clause_id: 2,
-    clause_title: 'Intellectual Property',
-    risk_level: 'HIGH' as const,
-    confidence: '0.94',
-    reason: 'Client receives no ownership of work product — all IP retained by Consultant',
-    flags: [
-      { code: 'IP_OWNERSHIP', description: 'All IP retained by consultant, not client' },
-      { code: 'REVOCABLE_LICENSE', description: 'License can be revoked at any time without notice' },
-    ],
-    text: 'All work product created by Consultant remains the exclusive property of Consultant. Client receives a limited, revocable, non-transferable license only.'
-  },
-  {
-    clause_id: 3,
-    clause_title: 'Non-Compete',
-    risk_level: 'HIGH' as const,
-    confidence: '0.97',
-    reason: '10-year worldwide non-compete is unreasonable and unenforceable in most jurisdictions',
-    flags: [
-      { code: 'UNREASONABLE_SCOPE', description: 'Worldwide + 10 years far exceeds legal standards' },
-      { code: 'UNENFORCEABLE', description: 'Likely void in most US states and EU jurisdictions' },
-    ],
-    text: 'Consultant shall not work for any company in any industry for 10 years after termination of this agreement, worldwide and without geographic limitation.'
-  },
-  {
-    clause_id: 4,
-    clause_title: 'Liability',
-    risk_level: 'HIGH' as const,
-    confidence: '0.91',
-    reason: 'Unlimited irrevocable liability creates catastrophic financial exposure for client',
-    flags: [
-      { code: 'UNLIMITED_LIABILITY', description: 'No cap on damages — unlimited exposure' },
-      { code: 'IRREVOCABLE', description: 'Cannot be limited or modified after signing' },
-    ],
-    text: 'Client assumes full and unlimited liability for any damages. Consultant liability is unlimited and irrevocably survives contract termination.'
-  },
-]
+interface ReviewClause {
+  clause_id: number
+  clause_title: string
+  risk_level: string
+  confidence: string | number
+  reason: string
+  flags: { code: string; description: string }[]
+  text?: string
+}
 
-function ClauseCard({ clause }: { clause: typeof MOCK_HIGH_RISK[0] }) {
+function toReviewClause(score: RiskScore, clauses: { id: number; text: string }[]): ReviewClause {
+  const clause = clauses.find(c => c.id === score.clause_id)
+  return {
+    clause_id: score.clause_id,
+    clause_title: score.clause_title,
+    risk_level: score.risk_level,
+    confidence: score.confidence,
+    reason: score.reason,
+    flags: score.flags,
+    text: clause?.text,
+  }
+}
+
+function ClauseCard({ clause }: { clause: ReviewClause }) {
   const [expanded, setExpanded] = useState(false)
   return (
     <div className="glass rounded-xl overflow-hidden border border-pink-400/20">
@@ -56,8 +40,8 @@ function ClauseCard({ clause }: { clause: typeof MOCK_HIGH_RISK[0] }) {
             <div>
               <div className="font-display font-bold text-white">{clause.clause_title}</div>
               <div className="flex items-center gap-2 mt-0.5">
-                <span className="risk-high text-xs font-mono px-2 py-0.5 rounded-full">HIGH RISK</span>
-                <span className="text-white/30 text-xs font-mono">confidence {(parseFloat(clause.confidence) * 100).toFixed(0)}%</span>
+                <span className={`risk-${clause.risk_level.toLowerCase()} text-xs font-mono px-2 py-0.5 rounded-full`}>{clause.risk_level} RISK</span>
+                <span className="text-white/30 text-xs font-mono">confidence {(parseFloat(String(clause.confidence)) * 100).toFixed(0)}%</span>
               </div>
             </div>
           </div>
@@ -92,8 +76,22 @@ function ClauseCard({ clause }: { clause: typeof MOCK_HIGH_RISK[0] }) {
 }
 
 export default function ReviewScreen() {
-  const { setActiveScreen, setHumanDecision, setSteps, setResult } = useApp()
+  const { result, setActiveScreen, setHumanDecision, setSteps, setResult } = useApp()
   const [deciding, setDeciding] = useState(false)
+
+  // Pull HIGH risk clauses from actual analysis result; fall back to all risk scores
+  const highRiskClauses: ReviewClause[] = result
+    ? result.risk_scores
+        .filter(r => r.risk_level === 'HIGH')
+        .map(r => toReviewClause(r, result.clauses))
+    : []
+
+  // If no HIGH-risk found, show MEDIUM ones (so review screen is never empty)
+  const reviewClauses: ReviewClause[] = highRiskClauses.length > 0
+    ? highRiskClauses
+    : (result?.risk_scores
+        .filter(r => r.risk_level === 'MEDIUM')
+        .map(r => toReviewClause(r, result.clauses)) ?? [])
 
   const decide = async (decision: 'approve' | 'reject') => {
     setDeciding(true)
@@ -127,7 +125,7 @@ export default function ReviewScreen() {
         </div>
         <div className="glass rounded-xl p-4 border border-amber-400/20">
           <p className="text-white/60 text-sm leading-relaxed">
-            The AI agent identified <span className="text-pink-400 font-bold">{MOCK_HIGH_RISK.length} HIGH risk clauses</span> that
+            The AI agent identified <span className="text-pink-400 font-bold">{reviewClauses.length} flagged clause{reviewClauses.length !== 1 ? 's' : ''}</span> that
             require human review before proceeding. Your decision will be cryptographically signed
             and recorded on Weilchain as an immutable audit event.
           </p>
@@ -136,7 +134,7 @@ export default function ReviewScreen() {
 
       {/* Risk cards */}
       <div className="space-y-4 mb-8">
-        {MOCK_HIGH_RISK.map(c => <ClauseCard key={c.clause_id} clause={c} />)}
+        {reviewClauses.map(c => <ClauseCard key={c.clause_id} clause={c} />)}
       </div>
 
       {/* Decision buttons */}

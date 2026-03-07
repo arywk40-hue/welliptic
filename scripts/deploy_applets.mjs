@@ -1,12 +1,24 @@
 /**
  * deploy_applets.mjs — Deploy LexAudit WASM applets to Weilchain
  * Matches the SDK example.js deploy pattern exactly.
- * Usage:  node scripts/deploy_applets.mjs
+ * Usage:  node scripts/deploy_applets.mjs [--pod <pod_id>]
+ *
+ * Pod selection (per hackathon announcement 2026-03-07):
+ *   - Prefer asia-south pod if in the region (pass --pod asia-south)
+ *   - NEVER deploy to SENATE pods
+ *   - Falls back to first non-SENATE pod if no --pod flag given
+ *
+ * Model (per hackathon announcement 2026-03-07):
+ *   - Use gpt-4o / gpt-5 with the free OpenAI key provided
  */
 import fs from 'fs/promises'
 import { WeilWallet } from '@weilliptic/weil-sdk'
 
 const SENTINEL = 'https://sentinel.unweil.me'
+
+// Allow --pod <id> CLI override (e.g. node deploy_applets.mjs --pod asia-south)
+const podArgIdx = process.argv.indexOf('--pod')
+const POD_OVERRIDE = podArgIdx !== -1 ? process.argv[podArgIdx + 1] : null
 
 async function fileToHex(filePath) {
   const buffer = await fs.readFile(filePath)
@@ -19,12 +31,27 @@ async function main() {
 
   const wallet = new WeilWallet({ privateKey, sentinelEndpoint: SENTINEL })
 
-  // List pods — deploy to first non-SENATE pod (like SDK example)
+  // List pods — prefer asia-south, NEVER deploy to SENATE (per hackathon rules)
   const pods = await wallet.pods.list()
   console.log('Found ' + pods.length + ' pod(s):', pods.map(p => p.podId))
 
-  const targetPod = pods.find(p => p.podId !== 'SENATE')?.podId || pods[0]?.podId
+  let targetPod
+  if (POD_OVERRIDE) {
+    targetPod = POD_OVERRIDE
+    console.log('Using --pod override: ' + targetPod)
+  } else {
+    // Priority: asia-south → any non-SENATE pod
+    const SENATE_PATTERN = /^SENATE/i
+    targetPod =
+      pods.find(p => p.podId === 'asia-south')?.podId ||
+      pods.find(p => !SENATE_PATTERN.test(p.podId))?.podId ||
+      pods[0]?.podId
+  }
   console.log('Deploying to pod: ' + targetPod + '\n')
+  if (/^SENATE/i.test(targetPod || '')) {
+    console.error('❌ Target pod is a SENATE pod — aborting. Use --pod <pod_id> to specify a valid pod.')
+    process.exit(1)
+  }
 
   // --- ClauseExtractor ---
   console.log('Deploying ClauseExtractor...')

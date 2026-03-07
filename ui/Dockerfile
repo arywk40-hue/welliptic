@@ -5,6 +5,10 @@ WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm ci
 
+# API base URL baked at build time (client-side code)
+ARG NEXT_PUBLIC_LEXAUDIT_API_BASE=http://localhost:8000
+ENV NEXT_PUBLIC_LEXAUDIT_API_BASE=$NEXT_PUBLIC_LEXAUDIT_API_BASE
+
 COPY . .
 RUN npm run build
 

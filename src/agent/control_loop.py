@@ -212,7 +212,7 @@ def run_lexaudit(
     contract_text: str,
     filename: str,
     *,
-    max_steps: int = 50,
+    max_steps: int = 200,
     human_gate_threshold: str = RiskLevel.HIGH.value,
     settings: Optional[Settings] = None,
     router: Optional[ToolRouter] = None,

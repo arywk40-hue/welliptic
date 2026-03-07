@@ -1,5 +1,5 @@
 {
-  "session_id": "b3023000-04e2-49e6-aeeb-01e4aa68d63a",
+  "session_id": "ba00f44e-9d6c-482a-8607-b205ddacdbbc",
   "state": {
     "contract_text": "NON-DISCLOSURE AGREEMENT\n\nThis Non-Disclosure Agreement (\"Agreement\") is entered into as of March 1, 2026, by and between:\n\nParty A: TechCorp Inc., a Delaware corporation (\"Disclosing Party\")\nParty B: StartupLabs LLC, a California limited liability company (\"Receiving Party\")\n\n1. DEFINITIONS\n\n1.1 \"Confidential Information\" means any and all non-public information, whether written, oral, electronic, or visual, disclosed by the Disclosing Party to the Receiving Party, including but not limited to: trade secrets, business plans, financial data, customer lists, technical specifications, source code, algorithms, and proprietary methodologies.\n\n1.2 \"Representatives\" means the Receiving Party's officers, directors, employees, agents, advisors, and contractors who have a need to know the Confidential Information.\n\n2. OBLIGATIONS OF RECEIVING PARTY\n\n2.1 The Receiving Party shall hold all Confidential Information in strict confidence and shall not disclose such information to any third party without the prior written consent of the Disclosing Party.\n\n2.2 The Receiving Party shall use the Confidential Information solely for the purpose of evaluating a potential business relationship between the parties (\"Permitted Purpose\").\n\n2.3 The Receiving Party shall protect the Confidential Information using at least the same degree of care it uses to protect its own confidential information, but in no event less than reasonable care.\n\n3. TERM AND TERMINATION\n\n3.1 This Agreement shall remain in effect for a period of three (3) years from the date of execution.\n\n3.2 Either party may terminate this Agreement at any time upon thirty (30) days' prior written notice to the other party. However, the obligations of confidentiality shall survive termination for an additional period of five (5) years.\n\n4. INDEMNIFICATION\n\n4.1 The Receiving Party shall indemnify and hold harmless the Disclosing Party from any and all losses, damages, claims, expenses, and attorneys' fees arising from or related to any breach of this Agreement by the Receiving Party or its Representatives.\n\n4.2 The Receiving Party's total liability under this Agreement shall not exceed $10,000,000 (ten million dollars), except in cases of willful misconduct or gross negligence.\n\n5. INTELLECTUAL PROPERTY\n\n5.1 Nothing in this Agreement shall be construed as granting the Receiving Party any rights or license to the Disclosing Party's intellectual property, including patents, copyrights, trademarks, or trade secrets.\n\n5.2 Any improvements, modifications, or derivative works created by the Receiving Party using Confidential Information shall be the sole and exclusive property of the Disclosing Party.\n\n6. NON-COMPETE AND NON-SOLICITATION\n\n6.1 During the term of this Agreement and for a period of two (2) years thereafter, the Receiving Party shall not directly or indirectly compete with the Disclosing Party in any market where the Disclosing Party conducts business.\n\n6.2 The Receiving Party shall not solicit, hire, or attempt to hire any employee of the Disclosing Party during the term of this Agreement and for one (1) year following termination.\n\n7. GOVERNING LAW AND DISPUTE RESOLUTION\n\n7.1 This Agreement shall be governed by and construed in accordance with the laws of the State of Delaware, without regard to its conflict of laws principles.\n\n7.2 Any dispute arising under this Agreement shall be resolved through binding arbitration administered by the American Arbitration Association in Wilmington, Delaware.\n\n7.3 The prevailing party in any arbitration or litigation shall be entitled to recover its reasonable attorneys' fees and costs.\n\n8. LIMITATION OF LIABILITY\n\n8.1 IN NO EVENT SHALL EITHER PARTY BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, OR PUNITIVE DAMAGES ARISING OUT OF OR RELATED TO THIS AGREEMENT.\n\n8.2 The Disclosing Party makes no warranties regarding the accuracy or completeness of the Confidential Information provided hereunder.\n\n9. GENERAL PROVISIONS\n\n9.1 This Agreement constitutes the entire agreement between the parties and supersedes all prior negotiations, representations, and agreements relating to the subject matter hereof.\n\n9.2 This Agreement may not be amended or modified except by a written instrument signed by both parties.\n\n9.3 If any provision of this Agreement is found to be invalid or unenforceable, the remaining provisions shall continue in full force and effect.\n\n9.4 This Agreement may be executed in counterparts, each of which shall be deemed an original.\n\nIN WITNESS WHEREOF, the parties have executed this Agreement as of the date first written above.\n\n_______________________\nTechCorp Inc.\nBy: [Authorized Signatory]\nDate: March 1, 2026\n\n_______________________\nStartupLabs LLC\nBy: [Authorized Signatory]\nDate: March 1, 2026",
     "filename": "sample_nda.txt",
@@ -7,152 +7,361 @@
       {
         "id": 1,
         "title": "DEFINITIONS",
-        "text": "1.1 \"Confidential Information\" means any and all non-public information, whether written, oral, electronic, or visual, disclosed by the Disclosing Party to the Receiving Party, including but not limited to: trade secrets, business plans, financial data, customer lists, technical specifications, source code, algorithms, and proprietary methodologies.\n\n1.2 \"Representatives\" means the Receiving Party's officers, directors, employees, agents, advisors, and contractors who have a need to know the Confidential Information."
+        "text": "This Non-Disclosure Agreement (\"Agreement\") is entered into as of March 1, 2026, by and between: Party A: TechCorp Inc., a Delaware corporation (\"Disclosing Party\") Party B: StartupLabs LLC, a California limited liability company (\"Receiving Party\")"
       },
       {
         "id": 2,
-        "title": "OBLIGATIONS OF RECEIVING PARTY",
-        "text": "2.1 The Receiving Party shall hold all Confidential Information in strict confidence and shall not disclose such information to any third party without the prior written consent of the Disclosing Party.\n\n2.2 The Receiving Party shall use the Confidential Information solely for the purpose of evaluating a potential business relationship between the parties (\"Permitted Purpose\").\n\n2.3 The Receiving Party shall protect the Confidential Information using at least the same degree of care it uses to protect its own confidential information, but in no event less than reasonable care."
+        "title": "DEFINITIONS - Confidential Information",
+        "text": "\"Confidential Information\" means any and all non-public information, whether written, oral, electronic, or visual, disclosed by the Disclosing Party to the Receiving Party, including but not limited to: trade secrets, business plans, financial data, customer lists, technical specifications, source code, algorithms, and proprietary methodologies."
       },
       {
         "id": 3,
-        "title": "TERM AND TERMINATION",
-        "text": "3.1 This Agreement shall remain in effect for a period of three (3) years from the date of execution.\n\n3.2 Either party may terminate this Agreement at any time upon thirty (30) days' prior written notice to the other party. However, the obligations of confidentiality shall survive termination for an additional period of five (5) years."
+        "title": "DEFINITIONS - Representatives",
+        "text": "\"Representatives\" means the Receiving Party's officers, directors, employees, agents, advisors, and contractors who have a need to know the Confidential Information."
       },
       {
         "id": 4,
-        "title": "INDEMNIFICATION",
-        "text": "4.1 The Receiving Party shall indemnify and hold harmless the Disclosing Party from any and all losses, damages, claims, expenses, and attorneys' fees arising from or related to any breach of this Agreement by the Receiving Party or its Representatives.\n\n4.2 The Receiving Party's total liability under this Agreement shall not exceed $10,000,000 (ten million dollars), except in cases of willful misconduct or gross negligence."
+        "title": "OBLIGATIONS OF RECEIVING PARTY - Confidentiality",
+        "text": "The Receiving Party shall hold all Confidential Information in strict confidence and shall not disclose such information to any third party without the prior written consent of the Disclosing Party."
       },
       {
         "id": 5,
-        "title": "INTELLECTUAL PROPERTY",
-        "text": "5.1 Nothing in this Agreement shall be construed as granting the Receiving Party any rights or license to the Disclosing Party's intellectual property, including patents, copyrights, trademarks, or trade secrets.\n\n5.2 Any improvements, modifications, or derivative works created by the Receiving Party using Confidential Information shall be the sole and exclusive property of the Disclosing Party."
+        "title": "OBLIGATIONS OF RECEIVING PARTY - Permitted Purpose",
+        "text": "The Receiving Party shall use the Confidential Information solely for the purpose of evaluating a potential business relationship between the parties (\"Permitted Purpose\")."
       },
       {
         "id": 6,
-        "title": "NON-COMPETE AND NON-SOLICITATION",
-        "text": "6.1 During the term of this Agreement and for a period of two (2) years thereafter, the Receiving Party shall not directly or indirectly compete with the Disclosing Party in any market where the Disclosing Party conducts business.\n\n6.2 The Receiving Party shall not solicit, hire, or attempt to hire any employee of the Disclosing Party during the term of this Agreement and for one (1) year following termination."
+        "title": "OBLIGATIONS OF RECEIVING PARTY - Protection of Confidential Information",
+        "text": "The Receiving Party shall protect the Confidential Information using at least the same degree of care it uses to protect its own confidential information, but in no event less than reasonable care."
       },
       {
         "id": 7,
-        "title": "GOVERNING LAW AND DISPUTE RESOLUTION",
-        "text": "7.1 This Agreement shall be governed by and construed in accordance with the laws of the State of Delaware, without regard to its conflict of laws principles.\n\n7.2 Any dispute arising under this Agreement shall be resolved through binding arbitration administered by the American Arbitration Association in Wilmington, Delaware.\n\n7.3 The prevailing party in any arbitration or litigation shall be entitled to recover its reasonable attorneys' fees and costs."
+        "title": "TERM AND TERMINATION",
+        "text": "This Agreement shall remain in effect for a period of three (3) years from the date of execution."
       },
       {
         "id": 8,
-        "title": "LIMITATION OF LIABILITY",
-        "text": "8.1 IN NO EVENT SHALL EITHER PARTY BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, OR PUNITIVE DAMAGES ARISING OUT OF OR RELATED TO THIS AGREEMENT.\n\n8.2 The Disclosing Party makes no warranties regarding the accuracy or completeness of the Confidential Information provided hereunder."
+        "title": "TERM AND TERMINATION - Termination Notice",
+        "text": "Either party may terminate this Agreement at any time upon thirty (30) days' prior written notice to the other party. However, the obligations of confidentiality shall survive termination for an additional period of five (5) years."
       },
       {
         "id": 9,
+        "title": "INDEMNIFICATION",
+        "text": "The Receiving Party shall indemnify and hold harmless the Disclosing Party from any and all losses, damages, claims, expenses, and attorneys' fees arising from or related to any breach of this Agreement by the Receiving Party or its Representatives."
+      },
+      {
+        "id": 10,
+        "title": "INDEMNIFICATION - Liability Limitation",
+        "text": "The Receiving Party's total liability under this Agreement shall not exceed $10,000,000 (ten million dollars), except in cases of willful misconduct or gross negligence."
+      },
+      {
+        "id": 11,
+        "title": "INTELLECTUAL PROPERTY",
+        "text": "Nothing in this Agreement shall be construed as granting the Receiving Party any rights or license to the Disclosing Party's intellectual property, including patents, copyrights, trademarks, or trade secrets."
+      },
+      {
+        "id": 12,
+        "title": "INTELLECTUAL PROPERTY - Improvements and Derivative Works",
+        "text": "Any improvements, modifications, or derivative works created by the Receiving Party using Confidential Information shall be the sole and exclusive property of the Disclosing Party."
+      },
+      {
+        "id": 13,
+        "title": "NON-COMPETE AND NON-SOLICITATION",
+        "text": "During the term of this Agreement and for a period of two (2) years thereafter, the Receiving Party shall not directly or indirectly compete with the Disclosing Party in any market where the Disclosing Party conducts business."
+      },
+      {
+        "id": 14,
+        "title": "NON-COMPETE AND NON-SOLICITATION - Non-Solicitation",
+        "text": "The Receiving Party shall not solicit, hire, or attempt to hire any employee of the Disclosing Party during the term of this Agreement and for one (1) year following termination."
+      },
+      {
+        "id": 15,
+        "title": "GOVERNING LAW AND DISPUTE RESOLUTION",
+        "text": "This Agreement shall be governed by and construed in accordance with the laws of the State of Delaware, without regard to its conflict of laws principles."
+      },
+      {
+        "id": 16,
+        "title": "GOVERNING LAW AND DISPUTE RESOLUTION - Arbitration",
+        "text": "Any dispute arising under this Agreement shall be resolved through binding arbitration administered by the American Arbitration Association in Wilmington, Delaware."
+      },
+      {
+        "id": 17,
+        "title": "GOVERNING LAW AND DISPUTE RESOLUTION - Attorneys' Fees",
+        "text": "The prevailing party in any arbitration or litigation shall be entitled to recover its reasonable attorneys' fees and costs."
+      },
+      {
+        "id": 18,
+        "title": "LIMITATION OF LIABILITY",
+        "text": "IN NO EVENT SHALL EITHER PARTY BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, OR PUNITIVE DAMAGES ARISING OUT OF OR RELATED TO THIS AGREEMENT."
+      },
+      {
+        "id": 19,
+        "title": "LIMITATION OF LIABILITY - Warranties",
+        "text": "The Disclosing Party makes no warranties regarding the accuracy or completeness of the Confidential Information provided hereunder."
+      },
+      {
+        "id": 20,
         "title": "GENERAL PROVISIONS",
-        "text": "9.1 This Agreement constitutes the entire agreement between the parties and supersedes all prior negotiations, representations, and agreements relating to the subject matter hereof.\n\n9.2 This Agreement may not be amended or modified except by a written instrument signed by both parties.\n\n9.3 If any provision of this Agreement is found to be invalid or unenforceable, the remaining provisions shall continue in full force and effect.\n\n9.4 This Agreement may be executed in counterparts, each of which shall be deemed an original.\n\nIN WITNESS WHEREOF, the parties have executed this Agreement as of the date first written above.\n\n_______________________\nTechCorp Inc.\nBy: [Authorized Signatory]\nDate: March 1, 2026\n\n_______________________\nStartupLabs LLC\nBy: [Authorized Signatory]\nDate: March 1, 2026"
+        "text": "This Agreement constitutes the entire agreement between the parties and supersedes all prior negotiations, representations, and agreements relating to the subject matter hereof."
+      },
+      {
+        "id": 21,
+        "title": "GENERAL PROVISIONS - Amendment",
+        "text": "This Agreement may not be amended or modified except by a written instrument signed by both parties."
+      },
+      {
+        "id": 22,
+        "title": "GENERAL PROVISIONS - Invalid or Unenforceable Provisions",
+        "text": "If any provision of this Agreement is found to be invalid or unenforceable, the remaining provisions shall continue in full force and effect."
+      },
+      {
+        "id": 23,
+        "title": "GENERAL PROVISIONS - Counterparts",
+        "text": "This Agreement may be executed in counterparts, each of which shall be deemed an original."
       }
     ],
-    "current_clause_index": 9,
+    "current_clause_index": 23,
     "risk_results": [
       {
         "clause_id": 1,
         "clause_title": "DEFINITIONS",
-        "risk_level": "MEDIUM",
-        "confidence": 0.65,
-        "reason": "Found 1 risk indicator(s): CONFIDENTIALITY_CONSTRAINT",
-        "flags": [
-          "CONFIDENTIALITY_CONSTRAINT: Contains 'confidential'"
-        ]
+        "risk_level": "LOW",
+        "confidence": 0.8,
+        "reason": "The clause does not contain any inherently risky language, as it is a standard introductory paragraph for a Non-Disclosure Agreement.",
+        "flags": []
       },
       {
         "clause_id": 2,
-        "clause_title": "OBLIGATIONS OF RECEIVING PARTY",
-        "risk_level": "MEDIUM",
-        "confidence": 0.65,
-        "reason": "Found 1 risk indicator(s): CONFIDENTIALITY_CONSTRAINT",
-        "flags": [
-          "CONFIDENTIALITY_CONSTRAINT: Contains 'confidential'"
-        ]
+        "clause_title": "DEFINITIONS - Confidential Information",
+        "risk_level": "LOW",
+        "confidence": 0.8,
+        "reason": "The clause defines confidential information broadly, but it does so in a typical and standard manner for non-disclosure agreements, which is commonplace in business settings.",
+        "flags": []
       },
       {
         "clause_id": 3,
-        "clause_title": "TERM AND TERMINATION",
-        "risk_level": "MEDIUM",
-        "confidence": 0.65,
-        "reason": "Found 1 risk indicator(s): CONFIDENTIALITY_CONSTRAINT",
+        "clause_title": "DEFINITIONS - Representatives",
+        "risk_level": "LOW",
+        "confidence": 0.8,
+        "reason": "The definition of Representatives is broad and could potentially include unauthorized individuals if the Receiving Party fails to properly limit access to Confidential Information.",
         "flags": [
-          "CONFIDENTIALITY_CONSTRAINT: Contains 'confidential'"
+          "OVERLY_BROAD_DEFINITION: The clause defines Representatives too broadly, which may lead to unintended disclosure of Confidential Information"
         ]
       },
       {
         "clause_id": 4,
-        "clause_title": "INDEMNIFICATION",
-        "risk_level": "MEDIUM",
-        "confidence": 0.65,
-        "reason": "Found 1 risk indicator(s): INDEMNITY_OBLIGATION",
+        "clause_title": "OBLIGATIONS OF RECEIVING PARTY - Confidentiality",
+        "risk_level": "LOW",
+        "confidence": 0.85,
+        "reason": "The clause requires prior written consent from the Disclosing Party before disclosing Confidential Information to any third party, which reduces the risk of unauthorized disclosure.",
         "flags": [
-          "INDEMNITY_OBLIGATION: Contains 'indemnify'"
+          "NO_INDEMNIFICATION: No explicit indemnification for damages in case of breach of confidentiality"
         ]
       },
       {
         "clause_id": 5,
-        "clause_title": "INTELLECTUAL PROPERTY",
-        "risk_level": "MEDIUM",
+        "clause_title": "OBLIGATIONS OF RECEIVING PARTY - Permitted Purpose",
+        "risk_level": "LOW",
         "confidence": 0.8,
-        "reason": "Found 2 risk indicator(s): EXCLUSIVITY_RESTRICTION, CONFIDENTIALITY_CONSTRAINT",
-        "flags": [
-          "EXCLUSIVITY_RESTRICTION: Contains 'exclusive'",
-          "CONFIDENTIALITY_CONSTRAINT: Contains 'confidential'"
-        ]
+        "reason": "The clause restricts the use of Confidential Information to a specific purpose, which reduces the risk of unauthorized disclosure or misuse.",
+        "flags": []
       },
       {
         "clause_id": 6,
-        "clause_title": "NON-COMPETE AND NON-SOLICITATION",
+        "clause_title": "OBLIGATIONS OF RECEIVING PARTY - Protection of Confidential Information",
         "risk_level": "LOW",
         "confidence": 0.85,
-        "reason": "No significant risk indicators detected",
-        "flags": []
+        "reason": "The clause requires the Receiving Party to use at least reasonable care to protect Confidential Information, which is a standard and expected level of protection.",
+        "flags": [
+          "DATA_PROTECTION: The clause addresses the protection of confidential information"
+        ]
       },
       {
         "clause_id": 7,
-        "clause_title": "GOVERNING LAW AND DISPUTE RESOLUTION",
+        "clause_title": "TERM AND TERMINATION",
         "risk_level": "LOW",
-        "confidence": 0.85,
-        "reason": "No significant risk indicators detected",
-        "flags": []
+        "confidence": 0.8,
+        "reason": "The agreement has a fixed three-year term, which limits the potential for long-term unforeseen obligations.",
+        "flags": [
+          "FIXED_TERM: The agreement has a fixed term, which may limit flexibility"
+        ]
       },
       {
         "clause_id": 8,
-        "clause_title": "LIMITATION OF LIABILITY",
+        "clause_title": "TERM AND TERMINATION - Termination Notice",
         "risk_level": "MEDIUM",
-        "confidence": 0.65,
-        "reason": "Found 1 risk indicator(s): CONFIDENTIALITY_CONSTRAINT",
+        "confidence": 0.7,
+        "reason": "The agreement allows either party to terminate at any time with only 30 days' notice, which could disrupt business operations and leave one party without recourse.",
         "flags": [
-          "CONFIDENTIALITY_CONSTRAINT: Contains 'confidential'"
+          "TERMINATIONWITHOUTCAUSE: The ability to terminate the agreement without cause or penalty may lead to unstable partnerships"
         ]
       },
       {
         "clause_id": 9,
-        "clause_title": "GENERAL PROVISIONS",
+        "clause_title": "INDEMNIFICATION",
+        "risk_level": "HIGH",
+        "confidence": 0.9,
+        "reason": "The Receiving Party is held liable for all losses and damages arising from any breach, which could result in significant financial exposure.",
+        "flags": [
+          "UNLIMITED_INDEMNIFICATION: The indemnification clause does not limit the amount of damages or losses that the Receiving Party may be liable for."
+        ]
+      },
+      {
+        "clause_id": 10,
+        "clause_title": "INDEMNIFICATION - Liability Limitation",
+        "risk_level": "MEDIUM",
+        "confidence": 0.8,
+        "reason": "The clause limits the Receiving Party's total liability to $10,000,000, which may not be sufficient to cover all potential damages in cases of willful misconduct or gross negligence.",
+        "flags": [
+          "LIABILITY_CAP: The agreement limits the Receiving Party's liability to a specific amount, which may not be adequate in all circumstances"
+        ]
+      },
+      {
+        "clause_id": 11,
+        "clause_title": "INTELLECTUAL PROPERTY",
         "risk_level": "LOW",
         "confidence": 0.85,
-        "reason": "No significant risk indicators detected",
-        "flags": []
+        "reason": "The clause explicitly states that the Receiving Party is not granted any rights or licenses to the Disclosing Party's intellectual property, thereby minimizing the risk of unauthorized use or misappropriation.",
+        "flags": [
+          "IP_PROTECTION: The clause prioritizes protection of the Disclosing Party's intellectual property"
+        ]
+      },
+      {
+        "clause_id": 12,
+        "clause_title": "INTELLECTUAL PROPERTY - Improvements and Derivative Works",
+        "risk_level": "MEDIUM",
+        "confidence": 0.8,
+        "reason": "The Receiving Party may unintentionally create derivative works using Confidential Information, potentially leading to intellectual property disputes.",
+        "flags": [
+          "INTELLECTUAL_PROPERTY: Risk of unintended creation of derivative works"
+        ]
+      },
+      {
+        "clause_id": 13,
+        "clause_title": "NON-COMPETE AND NON-SOLICITATION",
+        "risk_level": "MEDIUM",
+        "confidence": 0.8,
+        "reason": "The clause restricts the Receiving Party's ability to compete with the Disclosing Party for two years after the agreement term, potentially limiting their business opportunities and growth.",
+        "flags": [
+          "NON.COMPETE: Overly broad non-compete restriction"
+        ]
+      },
+      {
+        "clause_id": 14,
+        "clause_title": "NON-COMPETE AND NON-SOLICITATION - Non-Solicitation",
+        "risk_level": "MEDIUM",
+        "confidence": 0.7,
+        "reason": "The clause may be difficult to enforce and monitor, particularly in cases where an employee of the Disclosing Party initiates contact with the Receiving Party.",
+        "flags": [
+          "RESTRICTIVE_COVENANT: The clause restricts the Receiving Party's ability to hire employees from the Disclosing Party"
+        ]
+      },
+      {
+        "clause_id": 15,
+        "clause_title": "GOVERNING LAW AND DISPUTE RESOLUTION",
+        "risk_level": "LOW",
+        "confidence": 0.85,
+        "reason": "The choice of Delaware law may not provide adequate protection for parties not familiar with its laws, potentially leading to unforeseen liabilities.",
+        "flags": [
+          "JURISDICTION_RISK: Agreement is governed by laws of a specific state that may have unique regulations or provisions"
+        ]
+      },
+      {
+        "clause_id": 16,
+        "clause_title": "GOVERNING LAW AND DISPUTE RESOLUTION - Arbitration",
+        "risk_level": "MEDIUM",
+        "confidence": 0.7,
+        "reason": "The clause requires arbitration to be administered in Wilmington, Delaware, which may be an inconvenient or expensive location for one of the parties to travel to for dispute resolution.",
+        "flags": [
+          "JURISDICTIONAL_RISK: Potential for unequal access to dispute resolution due to location"
+        ]
+      },
+      {
+        "clause_id": 17,
+        "clause_title": "GOVERNING LAW AND DISPUTE RESOLUTION - Attorneys' Fees",
+        "risk_level": "MEDIUM",
+        "confidence": 0.8,
+        "reason": "The clause may lead to excessive financial burden on the non-prevailing party due to the recovery of reasonable attorneys' fees and costs by the prevailing party.",
+        "flags": [
+          "FEE_SHIFTING: Provision allowing one party to recover attorneys fees from the other"
+        ]
+      },
+      {
+        "clause_id": 18,
+        "clause_title": "LIMITATION OF LIABILITY",
+        "risk_level": "HIGH",
+        "confidence": 0.9,
+        "reason": "The clause completely waives liability for indirect, incidental, special, consequential, or punitive damages, potentially leaving one party with significant uncovered losses.",
+        "flags": [
+          "LIMITATION_OF_LIABILITY: The clause limits or excludes liability for certain types of damages"
+        ]
+      },
+      {
+        "clause_id": 19,
+        "clause_title": "LIMITATION OF LIABILITY - Warranties",
+        "risk_level": "MEDIUM",
+        "confidence": 0.8,
+        "reason": "The Disclosing Party's lack of warranty regarding the accuracy or completeness of the Confidential Information may lead to the Receiving Party relying on inaccurate or incomplete information.",
+        "flags": [
+          "NO WARRANTY: The Disclosing Party is not guaranteeing the reliability of the Confidential Information."
+        ]
+      },
+      {
+        "clause_id": 20,
+        "clause_title": "GENERAL PROVISIONS",
+        "risk_level": "MEDIUM",
+        "confidence": 0.7,
+        "reason": "The clause may lead to unintended waiver of rights or claims based on prior negotiations or representations that are not explicitly included in the Agreement.",
+        "flags": [
+          "WAIVER_FLAG: Potential waiver of prior rights or claims"
+        ]
+      },
+      {
+        "clause_id": 21,
+        "clause_title": "GENERAL PROVISIONS - Amendment",
+        "risk_level": "LOW",
+        "confidence": 0.85,
+        "reason": "The requirement for a written instrument signed by both parties to amend the agreement may cause delays in making necessary changes.",
+        "flags": [
+          "INFLEXIBILITY: Inability to quickly adapt to changing circumstances"
+        ]
+      },
+      {
+        "clause_id": 22,
+        "clause_title": "GENERAL PROVISIONS - Invalid or Unenforceable Provisions",
+        "risk_level": "LOW",
+        "confidence": 0.85,
+        "reason": "This clause may allow for unintended continuation of contractual obligations if a key provision is deemed invalid or unenforceable.",
+        "flags": [
+          "SEVERABILITY_RISK: Potential for remaining provisions to be overly broad or burdensome if a key provision is stricken"
+        ]
+      },
+      {
+        "clause_id": 23,
+        "clause_title": "GENERAL PROVISIONS - Counterparts",
+        "risk_level": "LOW",
+        "confidence": 0.8,
+        "reason": "The clause allows for the agreement to be executed in counterparts, which may lead to difficulties in verifying the authenticity of the original document.",
+        "flags": [
+          "COUNTERPART_execution: Potential for fraudulent or tampered copies of the agreement"
+        ]
       }
     ],
-    "step_index": 35,
-    "max_steps": 50,
+    "step_index": 77,
+    "max_steps": 200,
     "fatal_error": false,
     "error_message": null,
     "human_gate_open": false,
     "human_decision": "auto-approved",
-    "final_report": "LEXAUDIT CONTRACT RISK REPORT\nFile: sample_nda.txt\nDecision: auto-approved\nTerminate reason: complete\nPending human review: False\n\nRisk Summary:\n- HIGH: 0\n- MEDIUM: 6\n- LOW: 3\n",
-    "session_id": "b3023000-04e2-49e6-aeeb-01e4aa68d63a",
+    "final_report": "LEXAUDIT CONTRACT RISK REPORT\nFile: sample_nda.txt\nDecision: auto-approved\nTerminate reason: complete\nPending human review: False\n\nRisk Summary:\n- HIGH: 2\n- MEDIUM: 9\n- LOW: 12\n\nHigh-Risk Clauses:\n- INDEMNIFICATION: The Receiving Party is held liable for all losses and damages arising from any breach, which could result in significant financial exposure.\n- LIMITATION OF LIABILITY: The clause completely waives liability for indirect, incidental, special, consequential, or punitive damages, potentially leaving one party with significant uncovered losses.\n",
+    "session_id": "ba00f44e-9d6c-482a-8607-b205ddacdbbc",
     "terminate_reason": "complete"
   },
   "audit_log": [
     {
       "step_index": 0,
       "event_type": "INIT",
-      "timestamp": 1772544410,
+      "timestamp": 1772862192,
       "node": "control_loop",
       "input_hash": null,
       "output_hash": null,
@@ -163,7 +372,7 @@
       "error": null,
       "metadata": {
         "filename": "sample_nda.txt",
-        "max_steps": 50,
+        "max_steps": 200,
         "weilchain_tx_status": "TransactionStatus.IN_PROGRESS",
         "weilchain_batch_id": "",
         "weilchain_block_height": 0,
@@ -173,7 +382,7 @@
     {
       "step_index": 1,
       "event_type": "INGEST_START",
-      "timestamp": 1772544411,
+      "timestamp": 1772862193,
       "node": "ingest",
       "input_hash": "2ac9cf10a8ccb143",
       "output_hash": null,
@@ -192,7 +401,7 @@
     {
       "step_index": 2,
       "event_type": "INGEST_DONE",
-      "timestamp": 1772544411,
+      "timestamp": 1772862193,
       "node": "ingest",
       "input_hash": null,
       "output_hash": null,
@@ -213,7 +422,7 @@
     {
       "step_index": 3,
       "event_type": "TOOL_PREDICT",
-      "timestamp": 1772544411,
+      "timestamp": 1772862193,
       "node": "extract_clauses",
       "input_hash": "6d5469a02512d6ff",
       "output_hash": null,
@@ -235,11 +444,11 @@
     {
       "step_index": 4,
       "event_type": "TOOL_EXECUTE",
-      "timestamp": 1772544411,
+      "timestamp": 1772862198,
       "node": "extract_clauses",
       "input_hash": "6d5469a02512d6ff",
-      "output_hash": "be5923de479ab35b",
-      "latency_ms": 0,
+      "output_hash": "9b2b51a91f69546d",
+      "latency_ms": 2741,
       "model": "claude-opus-4-1",
       "tool_name": "clause_extractor",
       "status": "ok",
@@ -257,10 +466,10 @@
     {
       "step_index": 5,
       "event_type": "CLAUSES_EXTRACTED",
-      "timestamp": 1772544411,
+      "timestamp": 1772862198,
       "node": "extract_clauses",
       "input_hash": null,
-      "output_hash": "33f9c88775863b62",
+      "output_hash": "8e845ee0fc03674f",
       "latency_ms": 0,
       "model": null,
       "tool_name": null,
@@ -276,9 +485,9 @@
     {
       "step_index": 6,
       "event_type": "TOOL_PREDICT",
-      "timestamp": 1772544411,
+      "timestamp": 1772862198,
       "node": "risk_score",
-      "input_hash": "5bfa699fe6933b1c",
+      "input_hash": "3f4dbe6649236e61",
       "output_hash": null,
       "latency_ms": 0,
       "model": "claude-opus-4-1",
@@ -299,11 +508,11 @@
     {
       "step_index": 7,
       "event_type": "TOOL_EXECUTE",
-      "timestamp": 1772544411,
+      "timestamp": 1772862200,
       "node": "risk_score",
-      "input_hash": "5bfa699fe6933b1c",
-      "output_hash": "78f19af2e041a531",
-      "latency_ms": 0,
+      "input_hash": "3f4dbe6649236e61",
+      "output_hash": "61018f2a9da3888d",
+      "latency_ms": 362,
       "model": "claude-opus-4-1",
       "tool_name": "risk_scorer",
       "status": "ok",
@@ -322,10 +531,10 @@
     {
       "step_index": 8,
       "event_type": "RISK_SCORED",
-      "timestamp": 1772544411,
+      "timestamp": 1772862200,
       "node": "risk_score",
       "input_hash": null,
-      "output_hash": "c70793fe4eb5ac1d",
+      "output_hash": "3e651302123519ee",
       "latency_ms": 0,
       "model": null,
       "tool_name": null,
@@ -341,9 +550,9 @@
     {
       "step_index": 9,
       "event_type": "TOOL_PREDICT",
-      "timestamp": 1772544412,
+      "timestamp": 1772862201,
       "node": "risk_score",
-      "input_hash": "4f373bca3c7747f8",
+      "input_hash": "c4e48bfe7a690d01",
       "output_hash": null,
       "latency_ms": 0,
       "model": "claude-opus-4-1",
@@ -364,11 +573,11 @@
     {
       "step_index": 10,
       "event_type": "TOOL_EXECUTE",
-      "timestamp": 1772544412,
+      "timestamp": 1772862203,
       "node": "risk_score",
-      "input_hash": "4f373bca3c7747f8",
-      "output_hash": "234ec4135384c328",
-      "latency_ms": 0,
+      "input_hash": "c4e48bfe7a690d01",
+      "output_hash": "679f6ae604230b8d",
+      "latency_ms": 571,
       "model": "claude-opus-4-1",
       "tool_name": "risk_scorer",
       "status": "ok",
@@ -387,10 +596,10 @@
     {
       "step_index": 11,
       "event_type": "RISK_SCORED",
-      "timestamp": 1772544412,
+      "timestamp": 1772862203,
       "node": "risk_score",
       "input_hash": null,
-      "output_hash": "c58be5ad8375da87",
+      "output_hash": "6f0d6f495c79e8bf",
       "latency_ms": 0,
       "model": null,
       "tool_name": null,
@@ -406,9 +615,9 @@
     {
       "step_index": 12,
       "event_type": "TOOL_PREDICT",
-      "timestamp": 1772544412,
+      "timestamp": 1772862203,
       "node": "risk_score",
-      "input_hash": "d0e3cc39c8117fc4",
+      "input_hash": "5f6bec46872ad00f",
       "output_hash": null,
       "latency_ms": 0,
       "model": "claude-opus-4-1",
@@ -429,11 +638,11 @@
     {
       "step_index": 13,
       "event_type": "TOOL_EXECUTE",
-      "timestamp": 1772544412,
+      "timestamp": 1772862206,
       "node": "risk_score",
-      "input_hash": "d0e3cc39c8117fc4",
-      "output_hash": "0c3d2e9687b7784e",
-      "latency_ms": 0,
+      "input_hash": "5f6bec46872ad00f",
+      "output_hash": "c4fcb8727fa45271",
+      "latency_ms": 481,
       "model": "claude-opus-4-1",
       "tool_name": "risk_scorer",
       "status": "ok",
@@ -452,10 +661,10 @@
     {
       "step_index": 14,
       "event_type": "RISK_SCORED",
-      "timestamp": 1772544412,
+      "timestamp": 1772862206,
       "node": "risk_score",
       "input_hash": null,
-      "output_hash": "86e9106c5db9838a",
+      "output_hash": "8c345d12552f8046",
       "latency_ms": 0,
       "model": null,
       "tool_name": null,
@@ -471,9 +680,9 @@
     {
       "step_index": 15,
       "event_type": "TOOL_PREDICT",
-      "timestamp": 1772544412,
+      "timestamp": 1772862206,
       "node": "risk_score",
-      "input_hash": "a89907db6571dca3",
+      "input_hash": "d8d663c5cd9e1de4",
       "output_hash": null,
       "latency_ms": 0,
       "model": "claude-opus-4-1",
@@ -494,11 +703,11 @@
     {
       "step_index": 16,
       "event_type": "TOOL_EXECUTE",
-      "timestamp": 1772544412,
+      "timestamp": 1772862208,
       "node": "risk_score",
-      "input_hash": "a89907db6571dca3",
-      "output_hash": "c0b22615cc2f4306",
-      "latency_ms": 0,
+      "input_hash": "d8d663c5cd9e1de4",
+      "output_hash": "0e2877693de0b5a1",
+      "latency_ms": 548,
       "model": "claude-opus-4-1",
       "tool_name": "risk_scorer",
       "status": "ok",
@@ -517,10 +726,10 @@
     {
       "step_index": 17,
       "event_type": "RISK_SCORED",
-      "timestamp": 1772544413,
+      "timestamp": 1772862208,
       "node": "risk_score",
       "input_hash": null,
-      "output_hash": "c83cd3231071d462",
+      "output_hash": "e00b7774e93d5256",
       "latency_ms": 0,
       "model": null,
       "tool_name": null,
@@ -536,9 +745,9 @@
     {
       "step_index": 18,
       "event_type": "TOOL_PREDICT",
-      "timestamp": 1772544413,
+      "timestamp": 1772862208,
       "node": "risk_score",
-      "input_hash": "6e9909c9acf8f5de",
+      "input_hash": "24074091fba368e8",
       "output_hash": null,
       "latency_ms": 0,
       "model": "claude-opus-4-1",
@@ -559,11 +768,11 @@
     {
       "step_index": 19,
       "event_type": "TOOL_EXECUTE",
-      "timestamp": 1772544413,
+      "timestamp": 1772862211,
       "node": "risk_score",
-      "input_hash": "6e9909c9acf8f5de",
-      "output_hash": "404e1923efc50274",
-      "latency_ms": 0,
+      "input_hash": "24074091fba368e8",
+      "output_hash": "02f219f7a8abe586",
+      "latency_ms": 345,
       "model": "claude-opus-4-1",
       "tool_name": "risk_scorer",
       "status": "ok",
@@ -582,10 +791,10 @@
     {
       "step_index": 20,
       "event_type": "RISK_SCORED",
-      "timestamp": 1772544413,
+      "timestamp": 1772862211,
       "node": "risk_score",
       "input_hash": null,
-      "output_hash": "1538bceb5f15b2f7",
+      "output_hash": "3f4789ecd6869584",
       "latency_ms": 0,
       "model": null,
       "tool_name": null,
@@ -601,9 +810,9 @@
     {
       "step_index": 21,
       "event_type": "TOOL_PREDICT",
-      "timestamp": 1772544413,
+      "timestamp": 1772862211,
       "node": "risk_score",
-      "input_hash": "c5ff6465945a5783",
+      "input_hash": "a634a2bced85a8ce",
       "output_hash": null,
       "latency_ms": 0,
       "model": "claude-opus-4-1",
@@ -624,11 +833,11 @@
     {
       "step_index": 22,
       "event_type": "TOOL_EXECUTE",
-      "timestamp": 1772544413,
+      "timestamp": 1772862213,
       "node": "risk_score",
-      "input_hash": "c5ff6465945a5783",
-      "output_hash": "1a3c855c2c41208a",
-      "latency_ms": 0,
+      "input_hash": "a634a2bced85a8ce",
+      "output_hash": "023b7fe6627c0aa6",
+      "latency_ms": 476,
       "model": "claude-opus-4-1",
       "tool_name": "risk_scorer",
       "status": "ok",
@@ -647,7 +856,7 @@
     {
       "step_index": 23,
       "event_type": "RISK_SCORED",
-      "timestamp": 1772544413,
+      "timestamp": 1772862214,
       "node": "risk_score",
       "input_hash": null,
       "output_hash": "48ee65b5ebe300e6",
@@ -666,9 +875,9 @@
     {
       "step_index": 24,
       "event_type": "TOOL_PREDICT",
-      "timestamp": 1772544413,
+      "timestamp": 1772862214,
       "node": "risk_score",
-      "input_hash": "8684ac6394fb6777",
+      "input_hash": "046494f6400c0d3e",
       "output_hash": null,
       "latency_ms": 0,
       "model": "claude-opus-4-1",
@@ -689,11 +898,11 @@
     {
       "step_index": 25,
       "event_type": "TOOL_EXECUTE",
-      "timestamp": 1772544414,
+      "timestamp": 1772862216,
       "node": "risk_score",
-      "input_hash": "8684ac6394fb6777",
-      "output_hash": "df7ac43f65c0e3a2",
-      "latency_ms": 0,
+      "input_hash": "046494f6400c0d3e",
+      "output_hash": "31cfd6d37f4fa060",
+      "latency_ms": 590,
       "model": "claude-opus-4-1",
       "tool_name": "risk_scorer",
       "status": "ok",
@@ -712,10 +921,10 @@
     {
       "step_index": 26,
       "event_type": "RISK_SCORED",
-      "timestamp": 1772544414,
+      "timestamp": 1772862216,
       "node": "risk_score",
       "input_hash": null,
-      "output_hash": "ec5009c87dd0e9df",
+      "output_hash": "0fe524f3c8cf6cc0",
       "latency_ms": 0,
       "model": null,
       "tool_name": null,
@@ -731,9 +940,9 @@
     {
       "step_index": 27,
       "event_type": "TOOL_PREDICT",
-      "timestamp": 1772544414,
+      "timestamp": 1772862217,
       "node": "risk_score",
-      "input_hash": "5d6f8fe8edbab806",
+      "input_hash": "cc6d4472ee9bb1ed",
       "output_hash": null,
       "latency_ms": 0,
       "model": "claude-opus-4-1",
@@ -754,11 +963,11 @@
     {
       "step_index": 28,
       "event_type": "TOOL_EXECUTE",
-      "timestamp": 1772544414,
+      "timestamp": 1772862219,
       "node": "risk_score",
-      "input_hash": "5d6f8fe8edbab806",
-      "output_hash": "567644b3c749899b",
-      "latency_ms": 0,
+      "input_hash": "cc6d4472ee9bb1ed",
+      "output_hash": "d68e9767cbbdaa41",
+      "latency_ms": 599,
       "model": "claude-opus-4-1",
       "tool_name": "risk_scorer",
       "status": "ok",
@@ -777,10 +986,10 @@
     {
       "step_index": 29,
       "event_type": "RISK_SCORED",
-      "timestamp": 1772544414,
+      "timestamp": 1772862219,
       "node": "risk_score",
       "input_hash": null,
-      "output_hash": "ab3e93e6e73bdf77",
+      "output_hash": "a54a2faa7a4ad036",
       "latency_ms": 0,
       "model": null,
       "tool_name": null,
@@ -796,9 +1005,9 @@
     {
       "step_index": 30,
       "event_type": "TOOL_PREDICT",
-      "timestamp": 1772544414,
+      "timestamp": 1772862219,
       "node": "risk_score",
-      "input_hash": "e13f2545dd02a1ae",
+      "input_hash": "d2dbaef588cce477",
       "output_hash": null,
       "latency_ms": 0,
       "model": "claude-opus-4-1",
@@ -819,11 +1028,11 @@
     {
       "step_index": 31,
       "event_type": "TOOL_EXECUTE",
-      "timestamp": 1772544414,
+      "timestamp": 1772862222,
       "node": "risk_score",
-      "input_hash": "e13f2545dd02a1ae",
-      "output_hash": "40c10e73fa681e13",
-      "latency_ms": 0,
+      "input_hash": "d2dbaef588cce477",
+      "output_hash": "90bd09e6ca704c36",
+      "latency_ms": 577,
       "model": "claude-opus-4-1",
       "tool_name": "risk_scorer",
       "status": "ok",
@@ -842,10 +1051,10 @@
     {
       "step_index": 32,
       "event_type": "RISK_SCORED",
-      "timestamp": 1772544414,
+      "timestamp": 1772862222,
       "node": "risk_score",
       "input_hash": null,
-      "output_hash": "2f50a4a6547945bd",
+      "output_hash": "eddc538c0c898e7d",
       "latency_ms": 0,
       "model": null,
       "tool_name": null,
@@ -860,8 +1069,918 @@
     },
     {
       "step_index": 33,
+      "event_type": "TOOL_PREDICT",
+      "timestamp": 1772862222,
+      "node": "risk_score",
+      "input_hash": "3718298eab699ef1",
+      "output_hash": null,
+      "latency_ms": 0,
+      "model": "claude-opus-4-1",
+      "tool_name": "risk_scorer",
+      "status": "ok",
+      "error": null,
+      "metadata": {
+        "parse_attempt": 1,
+        "clause_id": 10,
+        "prompt_template_id": "contract_clause_extract_v1",
+        "predicted_method": "score_clause_risk",
+        "weilchain_tx_status": "TransactionStatus.IN_PROGRESS",
+        "weilchain_batch_id": "",
+        "weilchain_block_height": 0,
+        "weilchain_tx_hash": null
+      }
+    },
+    {
+      "step_index": 34,
+      "event_type": "TOOL_EXECUTE",
+      "timestamp": 1772862224,
+      "node": "risk_score",
+      "input_hash": "3718298eab699ef1",
+      "output_hash": "0dd1189568983288",
+      "latency_ms": 667,
+      "model": "claude-opus-4-1",
+      "tool_name": "risk_scorer",
+      "status": "ok",
+      "error": null,
+      "metadata": {
+        "attempts": 1,
+        "clause_id": 10,
+        "method": "score_clause_risk",
+        "prompt_template_id": "contract_clause_extract_v1",
+        "weilchain_tx_status": "TransactionStatus.IN_PROGRESS",
+        "weilchain_batch_id": "",
+        "weilchain_block_height": 0,
+        "weilchain_tx_hash": null
+      }
+    },
+    {
+      "step_index": 35,
+      "event_type": "RISK_SCORED",
+      "timestamp": 1772862225,
+      "node": "risk_score",
+      "input_hash": null,
+      "output_hash": "e87dd69db58d8bb9",
+      "latency_ms": 0,
+      "model": null,
+      "tool_name": null,
+      "status": "ok",
+      "error": null,
+      "metadata": {
+        "weilchain_tx_status": "TransactionStatus.IN_PROGRESS",
+        "weilchain_batch_id": "",
+        "weilchain_block_height": 0,
+        "weilchain_tx_hash": null
+      }
+    },
+    {
+      "step_index": 36,
+      "event_type": "TOOL_PREDICT",
+      "timestamp": 1772862225,
+      "node": "risk_score",
+      "input_hash": "14045387c1e781b0",
+      "output_hash": null,
+      "latency_ms": 0,
+      "model": "claude-opus-4-1",
+      "tool_name": "risk_scorer",
+      "status": "ok",
+      "error": null,
+      "metadata": {
+        "parse_attempt": 1,
+        "clause_id": 11,
+        "prompt_template_id": "contract_clause_extract_v1",
+        "predicted_method": "score_clause_risk",
+        "weilchain_tx_status": "TransactionStatus.IN_PROGRESS",
+        "weilchain_batch_id": "",
+        "weilchain_block_height": 0,
+        "weilchain_tx_hash": null
+      }
+    },
+    {
+      "step_index": 37,
+      "event_type": "TOOL_EXECUTE",
+      "timestamp": 1772862227,
+      "node": "risk_score",
+      "input_hash": "14045387c1e781b0",
+      "output_hash": "a395080ac022acb3",
+      "latency_ms": 531,
+      "model": "claude-opus-4-1",
+      "tool_name": "risk_scorer",
+      "status": "ok",
+      "error": null,
+      "metadata": {
+        "attempts": 1,
+        "clause_id": 11,
+        "method": "score_clause_risk",
+        "prompt_template_id": "contract_clause_extract_v1",
+        "weilchain_tx_status": "TransactionStatus.IN_PROGRESS",
+        "weilchain_batch_id": "",
+        "weilchain_block_height": 0,
+        "weilchain_tx_hash": null
+      }
+    },
+    {
+      "step_index": 38,
+      "event_type": "RISK_SCORED",
+      "timestamp": 1772862227,
+      "node": "risk_score",
+      "input_hash": null,
+      "output_hash": "9bae54cc52ac755e",
+      "latency_ms": 0,
+      "model": null,
+      "tool_name": null,
+      "status": "ok",
+      "error": null,
+      "metadata": {
+        "weilchain_tx_status": "TransactionStatus.IN_PROGRESS",
+        "weilchain_batch_id": "",
+        "weilchain_block_height": 0,
+        "weilchain_tx_hash": null
+      }
+    },
+    {
+      "step_index": 39,
+      "event_type": "TOOL_PREDICT",
+      "timestamp": 1772862227,
+      "node": "risk_score",
+      "input_hash": "41b2c2397597347e",
+      "output_hash": null,
+      "latency_ms": 0,
+      "model": "claude-opus-4-1",
+      "tool_name": "risk_scorer",
+      "status": "ok",
+      "error": null,
+      "metadata": {
+        "parse_attempt": 1,
+        "clause_id": 12,
+        "prompt_template_id": "contract_clause_extract_v1",
+        "predicted_method": "score_clause_risk",
+        "weilchain_tx_status": "TransactionStatus.IN_PROGRESS",
+        "weilchain_batch_id": "",
+        "weilchain_block_height": 0,
+        "weilchain_tx_hash": null
+      }
+    },
+    {
+      "step_index": 40,
+      "event_type": "TOOL_EXECUTE",
+      "timestamp": 1772862229,
+      "node": "risk_score",
+      "input_hash": "41b2c2397597347e",
+      "output_hash": "07806416d601e2a2",
+      "latency_ms": 400,
+      "model": "claude-opus-4-1",
+      "tool_name": "risk_scorer",
+      "status": "ok",
+      "error": null,
+      "metadata": {
+        "attempts": 1,
+        "clause_id": 12,
+        "method": "score_clause_risk",
+        "prompt_template_id": "contract_clause_extract_v1",
+        "weilchain_tx_status": "TransactionStatus.IN_PROGRESS",
+        "weilchain_batch_id": "",
+        "weilchain_block_height": 0,
+        "weilchain_tx_hash": null
+      }
+    },
+    {
+      "step_index": 41,
+      "event_type": "RISK_SCORED",
+      "timestamp": 1772862230,
+      "node": "risk_score",
+      "input_hash": null,
+      "output_hash": "1fe5d99c83096c7b",
+      "latency_ms": 0,
+      "model": null,
+      "tool_name": null,
+      "status": "ok",
+      "error": null,
+      "metadata": {
+        "weilchain_tx_status": "TransactionStatus.IN_PROGRESS",
+        "weilchain_batch_id": "",
+        "weilchain_block_height": 0,
+        "weilchain_tx_hash": null
+      }
+    },
+    {
+      "step_index": 42,
+      "event_type": "TOOL_PREDICT",
+      "timestamp": 1772862230,
+      "node": "risk_score",
+      "input_hash": "ad7dadd55fec385f",
+      "output_hash": null,
+      "latency_ms": 0,
+      "model": "claude-opus-4-1",
+      "tool_name": "risk_scorer",
+      "status": "ok",
+      "error": null,
+      "metadata": {
+        "parse_attempt": 1,
+        "clause_id": 13,
+        "prompt_template_id": "contract_clause_extract_v1",
+        "predicted_method": "score_clause_risk",
+        "weilchain_tx_status": "TransactionStatus.IN_PROGRESS",
+        "weilchain_batch_id": "",
+        "weilchain_block_height": 0,
+        "weilchain_tx_hash": null
+      }
+    },
+    {
+      "step_index": 43,
+      "event_type": "TOOL_EXECUTE",
+      "timestamp": 1772862232,
+      "node": "risk_score",
+      "input_hash": "ad7dadd55fec385f",
+      "output_hash": "e3985d30c64c47d8",
+      "latency_ms": 622,
+      "model": "claude-opus-4-1",
+      "tool_name": "risk_scorer",
+      "status": "ok",
+      "error": null,
+      "metadata": {
+        "attempts": 1,
+        "clause_id": 13,
+        "method": "score_clause_risk",
+        "prompt_template_id": "contract_clause_extract_v1",
+        "weilchain_tx_status": "TransactionStatus.IN_PROGRESS",
+        "weilchain_batch_id": "",
+        "weilchain_block_height": 0,
+        "weilchain_tx_hash": null
+      }
+    },
+    {
+      "step_index": 44,
+      "event_type": "RISK_SCORED",
+      "timestamp": 1772862232,
+      "node": "risk_score",
+      "input_hash": null,
+      "output_hash": "e286e06379ae0ffa",
+      "latency_ms": 0,
+      "model": null,
+      "tool_name": null,
+      "status": "ok",
+      "error": null,
+      "metadata": {
+        "weilchain_tx_status": "TransactionStatus.IN_PROGRESS",
+        "weilchain_batch_id": "",
+        "weilchain_block_height": 0,
+        "weilchain_tx_hash": null
+      }
+    },
+    {
+      "step_index": 45,
+      "event_type": "TOOL_PREDICT",
+      "timestamp": 1772862233,
+      "node": "risk_score",
+      "input_hash": "dbc86c87fc9f26d8",
+      "output_hash": null,
+      "latency_ms": 0,
+      "model": "claude-opus-4-1",
+      "tool_name": "risk_scorer",
+      "status": "ok",
+      "error": null,
+      "metadata": {
+        "parse_attempt": 1,
+        "clause_id": 14,
+        "prompt_template_id": "contract_clause_extract_v1",
+        "predicted_method": "score_clause_risk",
+        "weilchain_tx_status": "TransactionStatus.IN_PROGRESS",
+        "weilchain_batch_id": "",
+        "weilchain_block_height": 0,
+        "weilchain_tx_hash": null
+      }
+    },
+    {
+      "step_index": 46,
+      "event_type": "TOOL_EXECUTE",
+      "timestamp": 1772862235,
+      "node": "risk_score",
+      "input_hash": "dbc86c87fc9f26d8",
+      "output_hash": "9a170b12558aed9a",
+      "latency_ms": 560,
+      "model": "claude-opus-4-1",
+      "tool_name": "risk_scorer",
+      "status": "ok",
+      "error": null,
+      "metadata": {
+        "attempts": 1,
+        "clause_id": 14,
+        "method": "score_clause_risk",
+        "prompt_template_id": "contract_clause_extract_v1",
+        "weilchain_tx_status": "TransactionStatus.IN_PROGRESS",
+        "weilchain_batch_id": "",
+        "weilchain_block_height": 0,
+        "weilchain_tx_hash": null
+      }
+    },
+    {
+      "step_index": 47,
+      "event_type": "RISK_SCORED",
+      "timestamp": 1772862235,
+      "node": "risk_score",
+      "input_hash": null,
+      "output_hash": "2947a0ce652be4d2",
+      "latency_ms": 0,
+      "model": null,
+      "tool_name": null,
+      "status": "ok",
+      "error": null,
+      "metadata": {
+        "weilchain_tx_status": "TransactionStatus.IN_PROGRESS",
+        "weilchain_batch_id": "",
+        "weilchain_block_height": 0,
+        "weilchain_tx_hash": null
+      }
+    },
+    {
+      "step_index": 48,
+      "event_type": "TOOL_PREDICT",
+      "timestamp": 1772862235,
+      "node": "risk_score",
+      "input_hash": "733deba8a38e3075",
+      "output_hash": null,
+      "latency_ms": 0,
+      "model": "claude-opus-4-1",
+      "tool_name": "risk_scorer",
+      "status": "ok",
+      "error": null,
+      "metadata": {
+        "parse_attempt": 1,
+        "clause_id": 15,
+        "prompt_template_id": "contract_clause_extract_v1",
+        "predicted_method": "score_clause_risk",
+        "weilchain_tx_status": "TransactionStatus.IN_PROGRESS",
+        "weilchain_batch_id": "",
+        "weilchain_block_height": 0,
+        "weilchain_tx_hash": null
+      }
+    },
+    {
+      "step_index": 49,
+      "event_type": "TOOL_EXECUTE",
+      "timestamp": 1772862238,
+      "node": "risk_score",
+      "input_hash": "733deba8a38e3075",
+      "output_hash": "a6250ed32b7ffa61",
+      "latency_ms": 719,
+      "model": "claude-opus-4-1",
+      "tool_name": "risk_scorer",
+      "status": "ok",
+      "error": null,
+      "metadata": {
+        "attempts": 1,
+        "clause_id": 15,
+        "method": "score_clause_risk",
+        "prompt_template_id": "contract_clause_extract_v1",
+        "weilchain_tx_status": "TransactionStatus.IN_PROGRESS",
+        "weilchain_batch_id": "",
+        "weilchain_block_height": 0,
+        "weilchain_tx_hash": null
+      }
+    },
+    {
+      "step_index": 50,
+      "event_type": "RISK_SCORED",
+      "timestamp": 1772862238,
+      "node": "risk_score",
+      "input_hash": null,
+      "output_hash": "c2579fbefde36dbe",
+      "latency_ms": 0,
+      "model": null,
+      "tool_name": null,
+      "status": "ok",
+      "error": null,
+      "metadata": {
+        "weilchain_tx_status": "TransactionStatus.IN_PROGRESS",
+        "weilchain_batch_id": "",
+        "weilchain_block_height": 0,
+        "weilchain_tx_hash": null
+      }
+    },
+    {
+      "step_index": 51,
+      "event_type": "TOOL_PREDICT",
+      "timestamp": 1772862238,
+      "node": "risk_score",
+      "input_hash": "f03ffcf2d1570346",
+      "output_hash": null,
+      "latency_ms": 0,
+      "model": "claude-opus-4-1",
+      "tool_name": "risk_scorer",
+      "status": "ok",
+      "error": null,
+      "metadata": {
+        "parse_attempt": 1,
+        "clause_id": 16,
+        "prompt_template_id": "contract_clause_extract_v1",
+        "predicted_method": "score_clause_risk",
+        "weilchain_tx_status": "TransactionStatus.IN_PROGRESS",
+        "weilchain_batch_id": "",
+        "weilchain_block_height": 0,
+        "weilchain_tx_hash": null
+      }
+    },
+    {
+      "step_index": 52,
+      "event_type": "TOOL_EXECUTE",
+      "timestamp": 1772862240,
+      "node": "risk_score",
+      "input_hash": "f03ffcf2d1570346",
+      "output_hash": "626ef53360957176",
+      "latency_ms": 502,
+      "model": "claude-opus-4-1",
+      "tool_name": "risk_scorer",
+      "status": "ok",
+      "error": null,
+      "metadata": {
+        "attempts": 1,
+        "clause_id": 16,
+        "method": "score_clause_risk",
+        "prompt_template_id": "contract_clause_extract_v1",
+        "weilchain_tx_status": "TransactionStatus.IN_PROGRESS",
+        "weilchain_batch_id": "",
+        "weilchain_block_height": 0,
+        "weilchain_tx_hash": null
+      }
+    },
+    {
+      "step_index": 53,
+      "event_type": "RISK_SCORED",
+      "timestamp": 1772862241,
+      "node": "risk_score",
+      "input_hash": null,
+      "output_hash": "087aab25bbaff968",
+      "latency_ms": 0,
+      "model": null,
+      "tool_name": null,
+      "status": "ok",
+      "error": null,
+      "metadata": {
+        "weilchain_tx_status": "TransactionStatus.IN_PROGRESS",
+        "weilchain_batch_id": "",
+        "weilchain_block_height": 0,
+        "weilchain_tx_hash": null
+      }
+    },
+    {
+      "step_index": 54,
+      "event_type": "TOOL_PREDICT",
+      "timestamp": 1772862241,
+      "node": "risk_score",
+      "input_hash": "e643e9232fa2cfa3",
+      "output_hash": null,
+      "latency_ms": 0,
+      "model": "claude-opus-4-1",
+      "tool_name": "risk_scorer",
+      "status": "ok",
+      "error": null,
+      "metadata": {
+        "parse_attempt": 1,
+        "clause_id": 17,
+        "prompt_template_id": "contract_clause_extract_v1",
+        "predicted_method": "score_clause_risk",
+        "weilchain_tx_status": "TransactionStatus.IN_PROGRESS",
+        "weilchain_batch_id": "",
+        "weilchain_block_height": 0,
+        "weilchain_tx_hash": null
+      }
+    },
+    {
+      "step_index": 55,
+      "event_type": "TOOL_EXECUTE",
+      "timestamp": 1772862244,
+      "node": "risk_score",
+      "input_hash": "e643e9232fa2cfa3",
+      "output_hash": "cc77d91c2da73a23",
+      "latency_ms": 577,
+      "model": "claude-opus-4-1",
+      "tool_name": "risk_scorer",
+      "status": "ok",
+      "error": null,
+      "metadata": {
+        "attempts": 1,
+        "clause_id": 17,
+        "method": "score_clause_risk",
+        "prompt_template_id": "contract_clause_extract_v1",
+        "weilchain_tx_status": "TransactionStatus.IN_PROGRESS",
+        "weilchain_batch_id": "",
+        "weilchain_block_height": 0,
+        "weilchain_tx_hash": null
+      }
+    },
+    {
+      "step_index": 56,
+      "event_type": "RISK_SCORED",
+      "timestamp": 1772862244,
+      "node": "risk_score",
+      "input_hash": null,
+      "output_hash": "33522123e355057a",
+      "latency_ms": 0,
+      "model": null,
+      "tool_name": null,
+      "status": "ok",
+      "error": null,
+      "metadata": {
+        "weilchain_tx_status": "TransactionStatus.IN_PROGRESS",
+        "weilchain_batch_id": "",
+        "weilchain_block_height": 0,
+        "weilchain_tx_hash": null
+      }
+    },
+    {
+      "step_index": 57,
+      "event_type": "TOOL_PREDICT",
+      "timestamp": 1772862244,
+      "node": "risk_score",
+      "input_hash": "6b4f34ba515a8fa9",
+      "output_hash": null,
+      "latency_ms": 0,
+      "model": "claude-opus-4-1",
+      "tool_name": "risk_scorer",
+      "status": "ok",
+      "error": null,
+      "metadata": {
+        "parse_attempt": 1,
+        "clause_id": 18,
+        "prompt_template_id": "contract_clause_extract_v1",
+        "predicted_method": "score_clause_risk",
+        "weilchain_tx_status": "TransactionStatus.IN_PROGRESS",
+        "weilchain_batch_id": "",
+        "weilchain_block_height": 0,
+        "weilchain_tx_hash": null
+      }
+    },
+    {
+      "step_index": 58,
+      "event_type": "TOOL_EXECUTE",
+      "timestamp": 1772862246,
+      "node": "risk_score",
+      "input_hash": "6b4f34ba515a8fa9",
+      "output_hash": "daff1ec34b9afbbe",
+      "latency_ms": 500,
+      "model": "claude-opus-4-1",
+      "tool_name": "risk_scorer",
+      "status": "ok",
+      "error": null,
+      "metadata": {
+        "attempts": 1,
+        "clause_id": 18,
+        "method": "score_clause_risk",
+        "prompt_template_id": "contract_clause_extract_v1",
+        "weilchain_tx_status": "TransactionStatus.IN_PROGRESS",
+        "weilchain_batch_id": "",
+        "weilchain_block_height": 0,
+        "weilchain_tx_hash": null
+      }
+    },
+    {
+      "step_index": 59,
+      "event_type": "RISK_SCORED",
+      "timestamp": 1772862247,
+      "node": "risk_score",
+      "input_hash": null,
+      "output_hash": "ae5be467bd105538",
+      "latency_ms": 0,
+      "model": null,
+      "tool_name": null,
+      "status": "ok",
+      "error": null,
+      "metadata": {
+        "weilchain_tx_status": "TransactionStatus.IN_PROGRESS",
+        "weilchain_batch_id": "",
+        "weilchain_block_height": 0,
+        "weilchain_tx_hash": null
+      }
+    },
+    {
+      "step_index": 60,
+      "event_type": "TOOL_PREDICT",
+      "timestamp": 1772862247,
+      "node": "risk_score",
+      "input_hash": "ffe8b5512675c96f",
+      "output_hash": null,
+      "latency_ms": 0,
+      "model": "claude-opus-4-1",
+      "tool_name": "risk_scorer",
+      "status": "ok",
+      "error": null,
+      "metadata": {
+        "parse_attempt": 1,
+        "clause_id": 19,
+        "prompt_template_id": "contract_clause_extract_v1",
+        "predicted_method": "score_clause_risk",
+        "weilchain_tx_status": "TransactionStatus.IN_PROGRESS",
+        "weilchain_batch_id": "",
+        "weilchain_block_height": 0,
+        "weilchain_tx_hash": null
+      }
+    },
+    {
+      "step_index": 61,
+      "event_type": "TOOL_EXECUTE",
+      "timestamp": 1772862249,
+      "node": "risk_score",
+      "input_hash": "ffe8b5512675c96f",
+      "output_hash": "3f726f50a0451f88",
+      "latency_ms": 662,
+      "model": "claude-opus-4-1",
+      "tool_name": "risk_scorer",
+      "status": "ok",
+      "error": null,
+      "metadata": {
+        "attempts": 1,
+        "clause_id": 19,
+        "method": "score_clause_risk",
+        "prompt_template_id": "contract_clause_extract_v1",
+        "weilchain_tx_status": "TransactionStatus.IN_PROGRESS",
+        "weilchain_batch_id": "",
+        "weilchain_block_height": 0,
+        "weilchain_tx_hash": null
+      }
+    },
+    {
+      "step_index": 62,
+      "event_type": "RISK_SCORED",
+      "timestamp": 1772862249,
+      "node": "risk_score",
+      "input_hash": null,
+      "output_hash": "3510d0391095aed7",
+      "latency_ms": 0,
+      "model": null,
+      "tool_name": null,
+      "status": "ok",
+      "error": null,
+      "metadata": {
+        "weilchain_tx_status": "TransactionStatus.IN_PROGRESS",
+        "weilchain_batch_id": "",
+        "weilchain_block_height": 0,
+        "weilchain_tx_hash": null
+      }
+    },
+    {
+      "step_index": 63,
+      "event_type": "TOOL_PREDICT",
+      "timestamp": 1772862249,
+      "node": "risk_score",
+      "input_hash": "aaefcd1d6a870216",
+      "output_hash": null,
+      "latency_ms": 0,
+      "model": "claude-opus-4-1",
+      "tool_name": "risk_scorer",
+      "status": "ok",
+      "error": null,
+      "metadata": {
+        "parse_attempt": 1,
+        "clause_id": 20,
+        "prompt_template_id": "contract_clause_extract_v1",
+        "predicted_method": "score_clause_risk",
+        "weilchain_tx_status": "TransactionStatus.IN_PROGRESS",
+        "weilchain_batch_id": "",
+        "weilchain_block_height": 0,
+        "weilchain_tx_hash": null
+      }
+    },
+    {
+      "step_index": 64,
+      "event_type": "TOOL_EXECUTE",
+      "timestamp": 1772862252,
+      "node": "risk_score",
+      "input_hash": "aaefcd1d6a870216",
+      "output_hash": "210daf3f9817beb2",
+      "latency_ms": 499,
+      "model": "claude-opus-4-1",
+      "tool_name": "risk_scorer",
+      "status": "ok",
+      "error": null,
+      "metadata": {
+        "attempts": 1,
+        "clause_id": 20,
+        "method": "score_clause_risk",
+        "prompt_template_id": "contract_clause_extract_v1",
+        "weilchain_tx_status": "TransactionStatus.IN_PROGRESS",
+        "weilchain_batch_id": "",
+        "weilchain_block_height": 0,
+        "weilchain_tx_hash": null
+      }
+    },
+    {
+      "step_index": 65,
+      "event_type": "RISK_SCORED",
+      "timestamp": 1772862252,
+      "node": "risk_score",
+      "input_hash": null,
+      "output_hash": "5b55551ad51f6e57",
+      "latency_ms": 0,
+      "model": null,
+      "tool_name": null,
+      "status": "ok",
+      "error": null,
+      "metadata": {
+        "weilchain_tx_status": "TransactionStatus.IN_PROGRESS",
+        "weilchain_batch_id": "",
+        "weilchain_block_height": 0,
+        "weilchain_tx_hash": null
+      }
+    },
+    {
+      "step_index": 66,
+      "event_type": "TOOL_PREDICT",
+      "timestamp": 1772862252,
+      "node": "risk_score",
+      "input_hash": "ce4e036570e37f60",
+      "output_hash": null,
+      "latency_ms": 0,
+      "model": "claude-opus-4-1",
+      "tool_name": "risk_scorer",
+      "status": "ok",
+      "error": null,
+      "metadata": {
+        "parse_attempt": 1,
+        "clause_id": 21,
+        "prompt_template_id": "contract_clause_extract_v1",
+        "predicted_method": "score_clause_risk",
+        "weilchain_tx_status": "TransactionStatus.IN_PROGRESS",
+        "weilchain_batch_id": "",
+        "weilchain_block_height": 0,
+        "weilchain_tx_hash": null
+      }
+    },
+    {
+      "step_index": 67,
+      "event_type": "TOOL_EXECUTE",
+      "timestamp": 1772862254,
+      "node": "risk_score",
+      "input_hash": "ce4e036570e37f60",
+      "output_hash": "082c4268416cb31a",
+      "latency_ms": 363,
+      "model": "claude-opus-4-1",
+      "tool_name": "risk_scorer",
+      "status": "ok",
+      "error": null,
+      "metadata": {
+        "attempts": 1,
+        "clause_id": 21,
+        "method": "score_clause_risk",
+        "prompt_template_id": "contract_clause_extract_v1",
+        "weilchain_tx_status": "TransactionStatus.IN_PROGRESS",
+        "weilchain_batch_id": "",
+        "weilchain_block_height": 0,
+        "weilchain_tx_hash": null
+      }
+    },
+    {
+      "step_index": 68,
+      "event_type": "RISK_SCORED",
+      "timestamp": 1772862254,
+      "node": "risk_score",
+      "input_hash": null,
+      "output_hash": "a616f08c3a245bd9",
+      "latency_ms": 0,
+      "model": null,
+      "tool_name": null,
+      "status": "ok",
+      "error": null,
+      "metadata": {
+        "weilchain_tx_status": "TransactionStatus.IN_PROGRESS",
+        "weilchain_batch_id": "",
+        "weilchain_block_height": 0,
+        "weilchain_tx_hash": null
+      }
+    },
+    {
+      "step_index": 69,
+      "event_type": "TOOL_PREDICT",
+      "timestamp": 1772862255,
+      "node": "risk_score",
+      "input_hash": "e2f77c4b686aa472",
+      "output_hash": null,
+      "latency_ms": 0,
+      "model": "claude-opus-4-1",
+      "tool_name": "risk_scorer",
+      "status": "ok",
+      "error": null,
+      "metadata": {
+        "parse_attempt": 1,
+        "clause_id": 22,
+        "prompt_template_id": "contract_clause_extract_v1",
+        "predicted_method": "score_clause_risk",
+        "weilchain_tx_status": "TransactionStatus.IN_PROGRESS",
+        "weilchain_batch_id": "",
+        "weilchain_block_height": 0,
+        "weilchain_tx_hash": null
+      }
+    },
+    {
+      "step_index": 70,
+      "event_type": "TOOL_EXECUTE",
+      "timestamp": 1772862257,
+      "node": "risk_score",
+      "input_hash": "e2f77c4b686aa472",
+      "output_hash": "e0f78778312deda7",
+      "latency_ms": 671,
+      "model": "claude-opus-4-1",
+      "tool_name": "risk_scorer",
+      "status": "ok",
+      "error": null,
+      "metadata": {
+        "attempts": 1,
+        "clause_id": 22,
+        "method": "score_clause_risk",
+        "prompt_template_id": "contract_clause_extract_v1",
+        "weilchain_tx_status": "TransactionStatus.IN_PROGRESS",
+        "weilchain_batch_id": "",
+        "weilchain_block_height": 0,
+        "weilchain_tx_hash": null
+      }
+    },
+    {
+      "step_index": 71,
+      "event_type": "RISK_SCORED",
+      "timestamp": 1772862257,
+      "node": "risk_score",
+      "input_hash": null,
+      "output_hash": "31b26d3149ab6069",
+      "latency_ms": 0,
+      "model": null,
+      "tool_name": null,
+      "status": "ok",
+      "error": null,
+      "metadata": {
+        "weilchain_tx_status": "TransactionStatus.IN_PROGRESS",
+        "weilchain_batch_id": "",
+        "weilchain_block_height": 0,
+        "weilchain_tx_hash": null
+      }
+    },
+    {
+      "step_index": 72,
+      "event_type": "TOOL_PREDICT",
+      "timestamp": 1772862257,
+      "node": "risk_score",
+      "input_hash": "3682ffc2d4353d79",
+      "output_hash": null,
+      "latency_ms": 0,
+      "model": "claude-opus-4-1",
+      "tool_name": "risk_scorer",
+      "status": "ok",
+      "error": null,
+      "metadata": {
+        "parse_attempt": 1,
+        "clause_id": 23,
+        "prompt_template_id": "contract_clause_extract_v1",
+        "predicted_method": "score_clause_risk",
+        "weilchain_tx_status": "TransactionStatus.IN_PROGRESS",
+        "weilchain_batch_id": "",
+        "weilchain_block_height": 0,
+        "weilchain_tx_hash": null
+      }
+    },
+    {
+      "step_index": 73,
+      "event_type": "TOOL_EXECUTE",
+      "timestamp": 1772862260,
+      "node": "risk_score",
+      "input_hash": "3682ffc2d4353d79",
+      "output_hash": "6b651e744dd0cdf3",
+      "latency_ms": 618,
+      "model": "claude-opus-4-1",
+      "tool_name": "risk_scorer",
+      "status": "ok",
+      "error": null,
+      "metadata": {
+        "attempts": 1,
+        "clause_id": 23,
+        "method": "score_clause_risk",
+        "prompt_template_id": "contract_clause_extract_v1",
+        "weilchain_tx_status": "TransactionStatus.IN_PROGRESS",
+        "weilchain_batch_id": "",
+        "weilchain_block_height": 0,
+        "weilchain_tx_hash": null
+      }
+    },
+    {
+      "step_index": 74,
+      "event_type": "RISK_SCORED",
+      "timestamp": 1772862260,
+      "node": "risk_score",
+      "input_hash": null,
+      "output_hash": "1cc84bd1d16b85a2",
+      "latency_ms": 0,
+      "model": null,
+      "tool_name": null,
+      "status": "ok",
+      "error": null,
+      "metadata": {
+        "weilchain_tx_status": "TransactionStatus.IN_PROGRESS",
+        "weilchain_batch_id": "",
+        "weilchain_block_height": 0,
+        "weilchain_tx_hash": null
+      }
+    },
+    {
+      "step_index": 75,
       "event_type": "HUMAN_DECISION",
-      "timestamp": 1772544414,
+      "timestamp": 1772862260,
       "node": "human_gate",
       "input_hash": null,
       "output_hash": null,
@@ -879,9 +1998,9 @@
       }
     },
     {
-      "step_index": 34,
+      "step_index": 76,
       "event_type": "TERMINATE",
-      "timestamp": 1772544414,
+      "timestamp": 1772862260,
       "node": "terminate",
       "input_hash": null,
       "output_hash": null,
@@ -901,103 +2020,242 @@
       }
     }
   ],
-  "report_text": "LEXAUDIT CONTRACT RISK REPORT\nFile: sample_nda.txt\nDecision: auto-approved\nTerminate reason: complete\nPending human review: False\n\nRisk Summary:\n- HIGH: 0\n- MEDIUM: 6\n- LOW: 3\n",
+  "report_text": "LEXAUDIT CONTRACT RISK REPORT\nFile: sample_nda.txt\nDecision: auto-approved\nTerminate reason: complete\nPending human review: False\n\nRisk Summary:\n- HIGH: 2\n- MEDIUM: 9\n- LOW: 12\n\nHigh-Risk Clauses:\n- INDEMNIFICATION: The Receiving Party is held liable for all losses and damages arising from any breach, which could result in significant financial exposure.\n- LIMITATION OF LIABILITY: The clause completely waives liability for indirect, incidental, special, consequential, or punitive damages, potentially leaving one party with significant uncovered losses.\n",
   "report_json": {
     "filename": "sample_nda.txt",
     "decision": "auto-approved",
     "terminate_reason": "complete",
     "pending_human_review": false,
     "summary": {
-      "high": 0,
-      "medium": 6,
-      "low": 3,
-      "total_clauses": 9
+      "high": 2,
+      "medium": 9,
+      "low": 12,
+      "total_clauses": 23
     },
     "risk_results": [
       {
         "clause_id": 1,
         "clause_title": "DEFINITIONS",
-        "risk_level": "MEDIUM",
-        "confidence": 0.65,
-        "reason": "Found 1 risk indicator(s): CONFIDENTIALITY_CONSTRAINT",
-        "flags": [
-          "CONFIDENTIALITY_CONSTRAINT: Contains 'confidential'"
-        ]
+        "risk_level": "LOW",
+        "confidence": 0.8,
+        "reason": "The clause does not contain any inherently risky language, as it is a standard introductory paragraph for a Non-Disclosure Agreement.",
+        "flags": []
       },
       {
         "clause_id": 2,
-        "clause_title": "OBLIGATIONS OF RECEIVING PARTY",
-        "risk_level": "MEDIUM",
-        "confidence": 0.65,
-        "reason": "Found 1 risk indicator(s): CONFIDENTIALITY_CONSTRAINT",
-        "flags": [
-          "CONFIDENTIALITY_CONSTRAINT: Contains 'confidential'"
-        ]
+        "clause_title": "DEFINITIONS - Confidential Information",
+        "risk_level": "LOW",
+        "confidence": 0.8,
+        "reason": "The clause defines confidential information broadly, but it does so in a typical and standard manner for non-disclosure agreements, which is commonplace in business settings.",
+        "flags": []
       },
       {
         "clause_id": 3,
-        "clause_title": "TERM AND TERMINATION",
-        "risk_level": "MEDIUM",
-        "confidence": 0.65,
-        "reason": "Found 1 risk indicator(s): CONFIDENTIALITY_CONSTRAINT",
+        "clause_title": "DEFINITIONS - Representatives",
+        "risk_level": "LOW",
+        "confidence": 0.8,
+        "reason": "The definition of Representatives is broad and could potentially include unauthorized individuals if the Receiving Party fails to properly limit access to Confidential Information.",
         "flags": [
-          "CONFIDENTIALITY_CONSTRAINT: Contains 'confidential'"
+          "OVERLY_BROAD_DEFINITION: The clause defines Representatives too broadly, which may lead to unintended disclosure of Confidential Information"
         ]
       },
       {
         "clause_id": 4,
-        "clause_title": "INDEMNIFICATION",
-        "risk_level": "MEDIUM",
-        "confidence": 0.65,
-        "reason": "Found 1 risk indicator(s): INDEMNITY_OBLIGATION",
+        "clause_title": "OBLIGATIONS OF RECEIVING PARTY - Confidentiality",
+        "risk_level": "LOW",
+        "confidence": 0.85,
+        "reason": "The clause requires prior written consent from the Disclosing Party before disclosing Confidential Information to any third party, which reduces the risk of unauthorized disclosure.",
         "flags": [
-          "INDEMNITY_OBLIGATION: Contains 'indemnify'"
+          "NO_INDEMNIFICATION: No explicit indemnification for damages in case of breach of confidentiality"
         ]
       },
       {
         "clause_id": 5,
-        "clause_title": "INTELLECTUAL PROPERTY",
-        "risk_level": "MEDIUM",
+        "clause_title": "OBLIGATIONS OF RECEIVING PARTY - Permitted Purpose",
+        "risk_level": "LOW",
         "confidence": 0.8,
-        "reason": "Found 2 risk indicator(s): EXCLUSIVITY_RESTRICTION, CONFIDENTIALITY_CONSTRAINT",
-        "flags": [
-          "EXCLUSIVITY_RESTRICTION: Contains 'exclusive'",
-          "CONFIDENTIALITY_CONSTRAINT: Contains 'confidential'"
-        ]
+        "reason": "The clause restricts the use of Confidential Information to a specific purpose, which reduces the risk of unauthorized disclosure or misuse.",
+        "flags": []
       },
       {
         "clause_id": 6,
-        "clause_title": "NON-COMPETE AND NON-SOLICITATION",
+        "clause_title": "OBLIGATIONS OF RECEIVING PARTY - Protection of Confidential Information",
         "risk_level": "LOW",
         "confidence": 0.85,
-        "reason": "No significant risk indicators detected",
-        "flags": []
+        "reason": "The clause requires the Receiving Party to use at least reasonable care to protect Confidential Information, which is a standard and expected level of protection.",
+        "flags": [
+          "DATA_PROTECTION: The clause addresses the protection of confidential information"
+        ]
       },
       {
         "clause_id": 7,
-        "clause_title": "GOVERNING LAW AND DISPUTE RESOLUTION",
+        "clause_title": "TERM AND TERMINATION",
         "risk_level": "LOW",
-        "confidence": 0.85,
-        "reason": "No significant risk indicators detected",
-        "flags": []
+        "confidence": 0.8,
+        "reason": "The agreement has a fixed three-year term, which limits the potential for long-term unforeseen obligations.",
+        "flags": [
+          "FIXED_TERM: The agreement has a fixed term, which may limit flexibility"
+        ]
       },
       {
         "clause_id": 8,
-        "clause_title": "LIMITATION OF LIABILITY",
+        "clause_title": "TERM AND TERMINATION - Termination Notice",
         "risk_level": "MEDIUM",
-        "confidence": 0.65,
-        "reason": "Found 1 risk indicator(s): CONFIDENTIALITY_CONSTRAINT",
+        "confidence": 0.7,
+        "reason": "The agreement allows either party to terminate at any time with only 30 days' notice, which could disrupt business operations and leave one party without recourse.",
         "flags": [
-          "CONFIDENTIALITY_CONSTRAINT: Contains 'confidential'"
+          "TERMINATIONWITHOUTCAUSE: The ability to terminate the agreement without cause or penalty may lead to unstable partnerships"
         ]
       },
       {
         "clause_id": 9,
-        "clause_title": "GENERAL PROVISIONS",
+        "clause_title": "INDEMNIFICATION",
+        "risk_level": "HIGH",
+        "confidence": 0.9,
+        "reason": "The Receiving Party is held liable for all losses and damages arising from any breach, which could result in significant financial exposure.",
+        "flags": [
+          "UNLIMITED_INDEMNIFICATION: The indemnification clause does not limit the amount of damages or losses that the Receiving Party may be liable for."
+        ]
+      },
+      {
+        "clause_id": 10,
+        "clause_title": "INDEMNIFICATION - Liability Limitation",
+        "risk_level": "MEDIUM",
+        "confidence": 0.8,
+        "reason": "The clause limits the Receiving Party's total liability to $10,000,000, which may not be sufficient to cover all potential damages in cases of willful misconduct or gross negligence.",
+        "flags": [
+          "LIABILITY_CAP: The agreement limits the Receiving Party's liability to a specific amount, which may not be adequate in all circumstances"
+        ]
+      },
+      {
+        "clause_id": 11,
+        "clause_title": "INTELLECTUAL PROPERTY",
         "risk_level": "LOW",
         "confidence": 0.85,
-        "reason": "No significant risk indicators detected",
-        "flags": []
+        "reason": "The clause explicitly states that the Receiving Party is not granted any rights or licenses to the Disclosing Party's intellectual property, thereby minimizing the risk of unauthorized use or misappropriation.",
+        "flags": [
+          "IP_PROTECTION: The clause prioritizes protection of the Disclosing Party's intellectual property"
+        ]
+      },
+      {
+        "clause_id": 12,
+        "clause_title": "INTELLECTUAL PROPERTY - Improvements and Derivative Works",
+        "risk_level": "MEDIUM",
+        "confidence": 0.8,
+        "reason": "The Receiving Party may unintentionally create derivative works using Confidential Information, potentially leading to intellectual property disputes.",
+        "flags": [
+          "INTELLECTUAL_PROPERTY: Risk of unintended creation of derivative works"
+        ]
+      },
+      {
+        "clause_id": 13,
+        "clause_title": "NON-COMPETE AND NON-SOLICITATION",
+        "risk_level": "MEDIUM",
+        "confidence": 0.8,
+        "reason": "The clause restricts the Receiving Party's ability to compete with the Disclosing Party for two years after the agreement term, potentially limiting their business opportunities and growth.",
+        "flags": [
+          "NON.COMPETE: Overly broad non-compete restriction"
+        ]
+      },
+      {
+        "clause_id": 14,
+        "clause_title": "NON-COMPETE AND NON-SOLICITATION - Non-Solicitation",
+        "risk_level": "MEDIUM",
+        "confidence": 0.7,
+        "reason": "The clause may be difficult to enforce and monitor, particularly in cases where an employee of the Disclosing Party initiates contact with the Receiving Party.",
+        "flags": [
+          "RESTRICTIVE_COVENANT: The clause restricts the Receiving Party's ability to hire employees from the Disclosing Party"
+        ]
+      },
+      {
+        "clause_id": 15,
+        "clause_title": "GOVERNING LAW AND DISPUTE RESOLUTION",
+        "risk_level": "LOW",
+        "confidence": 0.85,
+        "reason": "The choice of Delaware law may not provide adequate protection for parties not familiar with its laws, potentially leading to unforeseen liabilities.",
+        "flags": [
+          "JURISDICTION_RISK: Agreement is governed by laws of a specific state that may have unique regulations or provisions"
+        ]
+      },
+      {
+        "clause_id": 16,
+        "clause_title": "GOVERNING LAW AND DISPUTE RESOLUTION - Arbitration",
+        "risk_level": "MEDIUM",
+        "confidence": 0.7,
+        "reason": "The clause requires arbitration to be administered in Wilmington, Delaware, which may be an inconvenient or expensive location for one of the parties to travel to for dispute resolution.",
+        "flags": [
+          "JURISDICTIONAL_RISK: Potential for unequal access to dispute resolution due to location"
+        ]
+      },
+      {
+        "clause_id": 17,
+        "clause_title": "GOVERNING LAW AND DISPUTE RESOLUTION - Attorneys' Fees",
+        "risk_level": "MEDIUM",
+        "confidence": 0.8,
+        "reason": "The clause may lead to excessive financial burden on the non-prevailing party due to the recovery of reasonable attorneys' fees and costs by the prevailing party.",
+        "flags": [
+          "FEE_SHIFTING: Provision allowing one party to recover attorneys fees from the other"
+        ]
+      },
+      {
+        "clause_id": 18,
+        "clause_title": "LIMITATION OF LIABILITY",
+        "risk_level": "HIGH",
+        "confidence": 0.9,
+        "reason": "The clause completely waives liability for indirect, incidental, special, consequential, or punitive damages, potentially leaving one party with significant uncovered losses.",
+        "flags": [
+          "LIMITATION_OF_LIABILITY: The clause limits or excludes liability for certain types of damages"
+        ]
+      },
+      {
+        "clause_id": 19,
+        "clause_title": "LIMITATION OF LIABILITY - Warranties",
+        "risk_level": "MEDIUM",
+        "confidence": 0.8,
+        "reason": "The Disclosing Party's lack of warranty regarding the accuracy or completeness of the Confidential Information may lead to the Receiving Party relying on inaccurate or incomplete information.",
+        "flags": [
+          "NO WARRANTY: The Disclosing Party is not guaranteeing the reliability of the Confidential Information."
+        ]
+      },
+      {
+        "clause_id": 20,
+        "clause_title": "GENERAL PROVISIONS",
+        "risk_level": "MEDIUM",
+        "confidence": 0.7,
+        "reason": "The clause may lead to unintended waiver of rights or claims based on prior negotiations or representations that are not explicitly included in the Agreement.",
+        "flags": [
+          "WAIVER_FLAG: Potential waiver of prior rights or claims"
+        ]
+      },
+      {
+        "clause_id": 21,
+        "clause_title": "GENERAL PROVISIONS - Amendment",
+        "risk_level": "LOW",
+        "confidence": 0.85,
+        "reason": "The requirement for a written instrument signed by both parties to amend the agreement may cause delays in making necessary changes.",
+        "flags": [
+          "INFLEXIBILITY: Inability to quickly adapt to changing circumstances"
+        ]
+      },
+      {
+        "clause_id": 22,
+        "clause_title": "GENERAL PROVISIONS - Invalid or Unenforceable Provisions",
+        "risk_level": "LOW",
+        "confidence": 0.85,
+        "reason": "This clause may allow for unintended continuation of contractual obligations if a key provision is deemed invalid or unenforceable.",
+        "flags": [
+          "SEVERABILITY_RISK: Potential for remaining provisions to be overly broad or burdensome if a key provision is stricken"
+        ]
+      },
+      {
+        "clause_id": 23,
+        "clause_title": "GENERAL PROVISIONS - Counterparts",
+        "risk_level": "LOW",
+        "confidence": 0.8,
+        "reason": "The clause allows for the agreement to be executed in counterparts, which may lead to difficulties in verifying the authenticity of the original document.",
+        "flags": [
+          "COUNTERPART_execution: Potential for fraudulent or tampered copies of the agreement"
+        ]
       }
     ]
   },

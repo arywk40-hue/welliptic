@@ -23,6 +23,17 @@ try:
 except Exception:  # noqa: BLE001
     _HAS_WEIL_WALLET = False
 
+# Lazy import to avoid circular dependency — resolved at runtime.
+_LocalFallbackMCPClient: type | None = None
+
+
+def _get_local_fallback_class() -> type:
+    global _LocalFallbackMCPClient
+    if _LocalFallbackMCPClient is None:
+        from src.tools.local_fallback import LocalFallbackMCPClient
+        _LocalFallbackMCPClient = LocalFallbackMCPClient
+    return _LocalFallbackMCPClient
+
 
 class ToolExecutionError(RuntimeError):
     pass
@@ -118,8 +129,19 @@ class WeilchainHTTPMCPClient:
         try:
             with urllib.request.urlopen(req, timeout=timeout_seconds) as resp:
                 raw = resp.read().decode("utf-8")
+        except urllib.error.HTTPError as exc:
+            if exc.code == 404:
+                raise ToolExecutionError(
+                    f"MCP applet not deployed yet (HTTP 404 for {tool_spec.applet_id}) "
+                    f"— using LocalFallback (correct for dev)"
+                ) from exc
+            raise ToolExecutionError(
+                f"MCP HTTP {exc.code} for applet {tool_spec.applet_id}: {exc.reason}"
+            ) from exc
         except urllib.error.URLError as exc:
-            raise ToolExecutionError(f"MCP request failed: {exc}") from exc
+            raise ToolExecutionError(
+                f"MCP endpoint unreachable ({exc.reason}) — will fall back to local"
+            ) from exc
 
         try:
             envelope = json.loads(raw)
@@ -241,6 +263,56 @@ class WeilchainSDKMCPClient:
         return {"result": response}
 
 
+class WeilchainHybridMCPClient:
+    """Try SDK first; fall back to HTTP if SDK execution fails."""
+
+    def __init__(self, sdk_client: Optional[MCPClient], http_client: MCPClient) -> None:
+        self.sdk_client = sdk_client
+        self.http_client = http_client
+
+    def is_available(self) -> bool:
+        return bool(
+            (self.sdk_client and self.sdk_client.is_available())
+            or self.http_client.is_available()
+        )
+
+    def discover_tools(self) -> Dict[str, ToolSpec]:
+        if self.sdk_client and self.sdk_client.is_available():
+            try:
+                return self.sdk_client.discover_tools()
+            except Exception:
+                pass
+        return self.http_client.discover_tools()
+
+    def call_tool(
+        self,
+        *,
+        tool_name: str,
+        method_name: str,
+        payload: Dict[str, Any],
+        timeout_seconds: float,
+        tool_spec: ToolSpec,
+    ) -> Dict[str, Any]:
+        if self.sdk_client and self.sdk_client.is_available():
+            try:
+                return self.sdk_client.call_tool(
+                    tool_name=tool_name,
+                    method_name=method_name,
+                    payload=payload,
+                    timeout_seconds=timeout_seconds,
+                    tool_spec=tool_spec,
+                )
+            except Exception as exc:
+                logger.debug("SDK call failed (%s: %s); falling back to HTTP client", type(exc).__name__, exc)
+        return self.http_client.call_tool(
+            tool_name=tool_name,
+            method_name=method_name,
+            payload=payload,
+            timeout_seconds=timeout_seconds,
+            tool_spec=tool_spec,
+        )
+
+
 class ToolRouter:
     def __init__(
         self,
@@ -269,8 +341,12 @@ class ToolRouter:
             self.mcp_client = self._build_real_mcp_client()
 
     def _build_real_mcp_client(self) -> MCPClient:
-        from src.tools.local_fallback import LocalFallbackMCPClient
+        """Build the best available MCP client.
 
+        Priority: SDK → HTTP → LocalFallback.  Never raises — the agent
+        must always be able to run (offline demo mode uses deterministic
+        local parsing which mirrors the on-chain WASM applets).
+        """
         required_env = {
             "WEILCHAIN_NODE_URL": self.settings.weilchain_node_url,
             "CLAUSE_EXTRACTOR_APPLET_ID": self.settings.clause_extractor_applet_id,
@@ -280,34 +356,52 @@ class ToolRouter:
         missing = sorted(key for key, value in required_env.items() if not value)
         if missing:
             logger.warning(
-                "Missing Weilchain config (%s) — using local fallback MCP client",
+                "Missing Weilchain config (%s) — falling back to local MCP",
                 ", ".join(missing),
             )
-            return LocalFallbackMCPClient(tool_specs=self.tool_specs)
+            return _get_local_fallback_class()(tool_specs=self.tool_specs)
 
         try:
-            client = WeilchainSDKMCPClient(
+            sdk_client: Optional[MCPClient] = None
+            try:
+                sdk_client = WeilchainSDKMCPClient(
+                    node_url=self.settings.weilchain_node_url,
+                    wallet_path=self.settings.weilchain_wallet_path,
+                    tool_specs=self.tool_specs,
+                )
+            except Exception as exc:  # noqa: BLE001
+                logger.info(
+                    "Weilchain SDK unavailable (%s: %s); will try HTTP — "
+                    "this is normal if applets aren't deployed yet",
+                    type(exc).__name__, exc,
+                )
+                sdk_client = None
+
+            http_client = WeilchainHTTPMCPClient(
                 node_url=self.settings.weilchain_node_url,
-                wallet_path=self.settings.weilchain_wallet_path,
                 tool_specs=self.tool_specs,
+                weil_auth_headers=self._weil_auth_headers,
             )
+
+            client: MCPClient = WeilchainHybridMCPClient(sdk_client, http_client)
 
             discovered = client.discover_tools()
             required = {"clause_extractor", "risk_scorer"}
             missing_tools = sorted(required - set(discovered.keys()))
             if missing_tools:
                 raise McpUnavailableError(
-                    f"Required tools not discovered in MCP registry: {missing_tools}"
+                    f"Required tools not discovered: {missing_tools}"
                 )
 
-            logger.info("Weilchain SDK MCP client initialized successfully")
+            logger.info("MCP client ready (SDK=%s, HTTP=%s)", sdk_client is not None, True)
             return client
-        except (McpUnavailableError, Exception) as exc:
-            logger.warning(
-                "Weilchain SDK unavailable (%s) — using local fallback MCP client",
-                exc,
+        except Exception as exc:  # noqa: BLE001
+            logger.info(
+                "Weilchain MCP not available (%s: %s) — using LocalFallback "
+                "(correct for dev, applets not deployed yet)",
+                type(exc).__name__, exc,
             )
-            return LocalFallbackMCPClient(tool_specs=self.tool_specs)
+            return _get_local_fallback_class()(tool_specs=self.tool_specs)
 
     def execute_tool(self, tool_name: str, payload: Dict[str, Any], ctx: ToolContext) -> ToolResult:
         tool_spec = self.tool_specs.get(tool_name)
@@ -326,14 +420,42 @@ class ToolRouter:
         if method_name is None:
             method_name = tool_spec.default_method
 
+        result = self._try_call(tool_name, str(method_name), request_payload, tool_spec)
+
+        # If the primary MCP client failed and we aren't already using
+        # LocalFallback, transparently retry with the deterministic local
+        # implementation so the pipeline never returns empty results.
+        if not result.success and not isinstance(self.mcp_client, _get_local_fallback_class()):
+            logger.info(
+                "MCP applet not deployed yet — using LocalFallback (correct for dev). "
+                "Tool: %s, error: %s",
+                tool_name, result.error,
+            )
+            fallback = _get_local_fallback_class()(tool_specs=self.tool_specs)
+            result = self._try_call(
+                tool_name, str(method_name), request_payload, tool_spec,
+                client_override=fallback,
+            )
+
+        return result
+
+    def _try_call(
+        self,
+        tool_name: str,
+        method_name: str,
+        payload: Dict[str, Any],
+        tool_spec: ToolSpec,
+        client_override: Optional[MCPClient] = None,
+    ) -> ToolResult:
+        client = client_override or self.mcp_client
         last_error: Optional[str] = None
         for attempt in range(1, self.settings.max_retries + 2):
             started = time.time()
             try:
-                envelope = self.mcp_client.call_tool(
+                envelope = client.call_tool(
                     tool_name=tool_name,
                     method_name=str(method_name),
-                    payload=request_payload,
+                    payload=payload,
                     timeout_seconds=self.settings.mcp_timeout_seconds,
                     tool_spec=tool_spec,
                 )

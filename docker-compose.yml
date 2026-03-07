@@ -6,8 +6,8 @@ services:
   # --- FastAPI backend (port 8000) ---
   api:
     build:
-      context: .
-      dockerfile: Dockerfile
+      context: ..
+      dockerfile: lexaudit/Dockerfile
     ports:
       - "8000:8000"
     env_file:
@@ -30,10 +30,12 @@ services:
     build:
       context: ./ui
       dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_LEXAUDIT_API_BASE: http://localhost:8000
     ports:
       - "3000:3000"
     environment:
-      - NEXT_PUBLIC_API_URL=http://api:8000
+      - NEXT_PUBLIC_LEXAUDIT_API_BASE=http://localhost:8000
     depends_on:
       api:
         condition: service_healthy

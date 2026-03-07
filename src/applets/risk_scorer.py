@@ -1,9 +1,8 @@
 from __future__ import annotations
 
 import json
+import os
 from typing import Any, Dict, List, Optional
-
-from anthropic import Anthropic
 
 from src.types import Clause, RiskLevel, RiskScore, ToolContext
 
@@ -13,6 +12,99 @@ VALID_LEVELS = {RiskLevel.LOW.value, RiskLevel.MEDIUM.value, RiskLevel.HIGH.valu
 
 class RiskParseError(ValueError):
     pass
+
+
+# ── LLM client helpers ────────────────────────────────────────────────────
+
+def _make_llm_client(ctx: ToolContext) -> Any:
+    """Return a (kind, client) tuple.  Priority: Groq > Gemini > OpenAI > Anthropic."""
+    # 1) Groq (fastest — highest priority)
+    use_groq = getattr(ctx, "use_groq", False) or os.getenv("USE_GROQ", "").lower() in {"1", "true", "yes"}
+    if use_groq:
+        groq_key = os.getenv("GROQ_API_KEY", "")
+        if groq_key:
+            try:
+                from groq import Groq  # type: ignore
+                model_name = os.getenv("GROQ_MODEL", "llama-3.3-70b-versatile")
+                return ("groq", (Groq(api_key=groq_key), model_name))
+            except Exception:  # noqa: BLE001
+                pass  # fall through
+
+    # 2) Gemini (free tier)
+    use_gemini = getattr(ctx, "use_gemini", False) or os.getenv("USE_GEMINI", "").lower() in {"1", "true", "yes"}
+    if use_gemini:
+        gemini_key = os.getenv("GEMINI_API_KEY", "")
+        if gemini_key:
+            try:
+                from google import genai  # type: ignore
+                client = genai.Client(api_key=gemini_key)
+                model_name = os.getenv("GEMINI_MODEL", "gemini-2.0-flash")
+                return ("gemini", (client, model_name))
+            except Exception:  # noqa: BLE001
+                pass  # fall through
+
+    # 3) OpenAI
+    use_openai = getattr(ctx, "use_openai", False) or os.getenv("USE_OPENAI", "").lower() in {"1", "true", "yes"}
+    if use_openai:
+        try:
+            from openai import OpenAI  # type: ignore
+            return ("openai", OpenAI(api_key=os.getenv("OPENAI_API_KEY")))
+        except Exception:  # noqa: BLE001
+            pass  # fall through
+
+    # 4) Anthropic (fallback)
+    from anthropic import Anthropic  # type: ignore
+    return ("anthropic", Anthropic())
+
+
+def _call_llm(client_tuple: Any, model: str, prompt: str, max_tokens: int) -> str:
+    """Call the LLM and return the raw text response."""
+    kind, client = client_tuple
+
+    if kind == "groq":
+        groq_client, groq_model = client
+        response = groq_client.chat.completions.create(
+            model=groq_model,
+            max_tokens=max_tokens,
+            messages=[{"role": "user", "content": prompt}],
+        )
+        content = response.choices[0].message.content
+        if not content:
+            raise RiskParseError("Empty Groq response")
+        return content
+
+    if kind == "gemini":
+        gemini_client, gemini_model = client
+        response = gemini_client.models.generate_content(
+            model=gemini_model,
+            contents=prompt,
+        )
+        text = response.text
+        if not text:
+            raise RiskParseError("Empty Gemini response")
+        return text
+
+    if kind == "openai":
+        openai_model = os.getenv("OPENAI_MODEL", model if "gpt" in model else "gpt-4o")
+        response = client.chat.completions.create(
+            model=openai_model,
+            max_tokens=max_tokens,
+            messages=[{"role": "user", "content": prompt}],
+        )
+        content = response.choices[0].message.content
+        if not content:
+            raise RiskParseError("Empty OpenAI response")
+        return content
+
+    # Anthropic
+    response = client.messages.create(
+        model=model,
+        max_tokens=max_tokens,
+        messages=[{"role": "user", "content": prompt}],
+    )
+    if not response.content:
+        raise RiskParseError("Empty Anthropic response")
+    return response.content[0].text
 
 
 def _strip_fenced_json(raw: str) -> str:
@@ -62,14 +154,26 @@ def parse_risk_response(raw: Any, clause: Clause) -> RiskScore:
         raise RiskParseError(f"Invalid risk level: {level}")
 
     confidence_raw = payload.get("confidence")
-    if not isinstance(confidence_raw, str):
-        raise RiskParseError("confidence must be a string (WIDL schema)")
-    try:
+    # Some LLMs return confidence as a number, word ("high"), or string "0.85".
+    # Normalize all forms into a float between 0 and 1.
+    if isinstance(confidence_raw, (int, float)):
         confidence = float(confidence_raw)
-    except ValueError as exc:
-        raise RiskParseError("confidence string must be numeric") from exc
-    if confidence < 0 or confidence > 1:
-        raise RiskParseError("confidence must be between 0 and 1")
+        # If the model returned e.g. 85 instead of 0.85, normalize
+        if confidence > 1:
+            confidence = confidence / 100.0
+    elif isinstance(confidence_raw, str):
+        # Try numeric parse first
+        try:
+            confidence = float(confidence_raw.strip().rstrip("%"))
+            if confidence > 1:
+                confidence = confidence / 100.0
+        except ValueError:
+            # Word-based: "high" → 0.9, "medium" → 0.6, "low" → 0.3
+            word_map = {"high": 0.9, "medium": 0.6, "moderate": 0.6, "low": 0.3, "very high": 0.95, "very low": 0.15}
+            confidence = word_map.get(confidence_raw.strip().lower(), 0.5)
+    else:
+        confidence = 0.5  # fallback
+    confidence = max(0.0, min(1.0, confidence))
 
     reason = payload.get("reason")
     if not isinstance(reason, str) or not reason.strip():
@@ -104,32 +208,22 @@ def _extract_payload(raw_payload: Any) -> Any:
     return raw_payload
 
 
-def score_clause_risk(clause: Clause, ctx: ToolContext, client: Optional[Anthropic] = None) -> RiskScore:
-    llm = client or Anthropic()
-    response = llm.messages.create(
-        model=ctx.model,
-        max_tokens=512,
-        messages=[
-            {
-                "role": "user",
-                "content": (
-                    "Analyze this legal clause for risk and return JSON only with risk_level,"
-                    " confidence (string), reason, flags where each flag has code and description."
-                    " The reason must be ONE specific sentence tied directly to this clause text,"
-                    " explaining exactly why it is risky (e.g., '10-year worldwide non-compete far"
-                    " exceeds enforceable limits in most jurisdictions'). Avoid generic reasons such"
-                    " as 'Contains unusually restrictive or unbounded terms'."
-                    "\\n\\nClause:\\n"
-                    + clause.text[:3000]
-                ),
-            }
-        ],
+def score_clause_risk(clause: Clause, ctx: ToolContext, client: Optional[Any] = None) -> RiskScore:
+    llm = client or _make_llm_client(ctx)
+    prompt = (
+        "Analyze this legal clause for risk. Return ONLY a JSON object (no markdown, no"
+        " explanation) with these exact fields:\n"
+        '  "risk_level": "HIGH" or "MEDIUM" or "LOW",\n'
+        '  "confidence": "0.85" (a decimal string between 0 and 1),\n'
+        '  "reason": "One specific sentence explaining the risk",\n'
+        '  "flags": [{"code": "FLAG_CODE", "description": "explanation"}]\n\n'
+        "The reason must be ONE specific sentence tied directly to this clause text,"
+        " explaining exactly why it is risky. Avoid generic reasons.\n\n"
+        "Clause:\n"
+        + clause.text[:3000]
     )
-
-    if not response.content:
-        raise RiskParseError("Empty LLM response")
-
-    return parse_risk_response(response.content[0].text, clause)
+    raw = _call_llm(llm, ctx.model, prompt, max_tokens=512)
+    return parse_risk_response(raw, clause)
 
 
 def score_clause_from_payload(payload: Dict[str, Any], clause: Clause) -> RiskScore:
