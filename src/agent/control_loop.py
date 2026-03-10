@@ -629,4 +629,5 @@ def _finalize_result(
         report_text=report["report_text"],
         report_json=report["report_json"],
         pending_human_review=pending_human_review,
+        weil_audit_logger=weil_audit,
     )

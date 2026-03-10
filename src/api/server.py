@@ -127,12 +127,17 @@ def health() -> Dict[str, Any]:
         and settings.clause_extractor_applet_id
         and settings.risk_scorer_applet_id
     )
+
+    # Determine MCP mode: "real" if all Weilchain config is set, else "local"
+    mcp_mode = "real" if weilchain_ok else "local"
+
     return {
         "status": "ok",
         "llm": llm_ok,
         "llm_provider": llm_provider,
         "weilchain": weilchain_ok,
         "weil_middleware": _WEIL_MIDDLEWARE_ACTIVE,
+        "mcp_mode": mcp_mode,
     }
 
 
@@ -162,6 +167,13 @@ def _run_analysis(req: AnalyseRequest) -> Dict[str, Any]:
 
     payload = result.to_dict()
     payload = _attach_audit_links(payload, settings.weilchain_node_url)
+
+    # Add wallet explorer URL if weil_audit_logger has a wallet address
+    if result.weil_audit_logger and hasattr(result.weil_audit_logger, 'wallet_address'):
+        wallet_address = result.weil_audit_logger.wallet_address
+        if wallet_address:
+            from src.agent.audit import get_wallet_explorer_url
+            payload["explorer_url"] = get_wallet_explorer_url(wallet_address)
 
     # Stash result for /api/continue if human gate is pending
     if payload.get("pending_human_review"):
