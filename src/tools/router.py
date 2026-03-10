@@ -426,11 +426,7 @@ class ToolRouter:
         # LocalFallback, transparently retry with the deterministic local
         # implementation so the pipeline never returns empty results.
         if not result.success and not isinstance(self.mcp_client, _get_local_fallback_class()):
-            logger.info(
-                "MCP applet not deployed yet — using LocalFallback (correct for dev). "
-                "Tool: %s, error: %s",
-                tool_name, result.error,
-            )
+            logger.warning("⚠️ MCP failed — LocalFallback (tool: %s, error: %s)", tool_name, result.error)
             fallback = _get_local_fallback_class()(tool_specs=self.tool_specs)
             result = self._try_call(
                 tool_name, str(method_name), request_payload, tool_spec,
@@ -461,6 +457,9 @@ class ToolRouter:
                 )
                 latency_ms = int((time.time() - started) * 1000)
                 data = _normalize_envelope(envelope)
+                # Log success for real Weilchain MCP calls (not LocalFallback)
+                if not isinstance(client, _get_local_fallback_class()):
+                    logger.info("🔗 Real Weilchain MCP: %s", tool_spec.applet_id)
                 return ToolResult(
                     success=True,
                     data=data,

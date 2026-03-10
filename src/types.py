@@ -91,6 +91,7 @@ class AuditResult:
     report_text: Optional[str]
     report_json: Dict[str, Any]
     pending_human_review: bool
+    weil_audit_logger: Optional[Any] = None  # WeilAuditLogger, avoid circular import
 
     @property
     def clauses(self) -> List[Clause]:
@@ -105,7 +106,7 @@ class AuditResult:
         return self.state.risk_results
 
     def to_dict(self) -> Dict[str, Any]:
-        return {
+        result = {
             "session_id": self.session_id,
             "state": asdict(self.state),
             "audit_log": [asdict(e) for e in self.audit_log],
@@ -113,6 +114,10 @@ class AuditResult:
             "report_json": self.report_json,
             "pending_human_review": self.pending_human_review,
         }
+        # Add tx_hashes from WeilAuditLogger if available
+        if self.weil_audit_logger and hasattr(self.weil_audit_logger, 'get_tx_hashes'):
+            result["tx_hashes"] = self.weil_audit_logger.get_tx_hashes()
+        return result
 
 
 DecisionProvider = Callable[[List[RiskScore]], str]

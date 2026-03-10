@@ -312,3 +312,17 @@ class WeilAuditLogger:
                 "On-chain audit failed for event '%s': %s (%s) — local JSONL still recorded",
                 event_type, type(exc).__name__, exc,
             )
+
+    def get_tx_hashes(self) -> List[str]:
+        """Return all transaction hashes from audit calls."""
+        return [tx["tx_hash"] for tx in self.tx_results if tx.get("tx_hash")]
+
+
+def get_explorer_url(tx_hash: str) -> str:
+    """Return Weilchain explorer URL for a transaction hash."""
+    return f"https://explorer.weilliptic.ai/tx/{tx_hash}"
+
+
+def get_wallet_explorer_url(address: str) -> str:
+    """Return Weilchain explorer URL for a wallet address."""
+    return f"https://explorer.weilliptic.ai/address/{address}"

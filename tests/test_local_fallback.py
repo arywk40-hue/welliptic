@@ -164,3 +164,73 @@ def test_full_pipeline_with_local_fallback(tmp_path):
     assert result.state.human_decision == "pending"
     # Audit events should be populated
     assert len(result.audit_log) > 10
+
+
+def test_groq_llm_delegation_risk_scoring(monkeypatch, tmp_path):
+    """Mock Groq response and verify it matches WIDL RiskScore schema."""
+    import json
+
+    # Mock Groq client and response
+    class MockGroqCompletion:
+        def __init__(self, content):
+            self.content = content
+
+    class MockGroqChoice:
+        def __init__(self, content):
+            self.message = MockGroqCompletion(content)
+
+    class MockGroqResponse:
+        def __init__(self, content):
+            self.choices = [MockGroqChoice(content)]
+
+    class MockGroqClient:
+        def __init__(self, api_key):
+            pass
+
+        @property
+        def chat(self):
+            return self
+
+        @property
+        def completions(self):
+            return self
+
+        def create(self, **kwargs):
+            # Return a valid WIDL RiskScore response
+            response_json = json.dumps({
+                "risk_level": "HIGH",
+                "confidence": "0.9",
+                "reason": "Test risk reason",
+                "flags": [{"code": "TEST_FLAG", "description": "Test description"}]
+            })
+            return MockGroqResponse(response_json)
+
+    # Monkeypatch Groq import
+    import sys
+    import types
+    groq_module = types.ModuleType("groq")
+    groq_module.Groq = MockGroqClient
+    sys.modules["groq"] = groq_module
+
+    # Set environment to use Groq
+    monkeypatch.setenv("USE_GROQ", "true")
+    monkeypatch.setenv("GROQ_API_KEY", "test-key")
+    monkeypatch.setenv("GROQ_MODEL", "llama-3.3-70b-versatile")
+
+    # Use local fallback with LLM delegation
+    from src.tools.local_fallback import _score_single
+
+    # Test direct risk scoring
+    result = _score_single(
+        clause_id=1,
+        clause_title="Test Clause",
+        clause_text="This is a test clause with severe penalties",
+    )
+
+    # Verify schema compliance
+    assert result["risk_level"] in ["LOW", "MEDIUM", "HIGH"]
+    assert isinstance(result["confidence"], str)
+    assert isinstance(result["flags"], list)
+    for flag in result["flags"]:
+        assert "code" in flag
+        assert "description" in flag

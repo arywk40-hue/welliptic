@@ -1,0 +1,9 @@
+{
+  "build": {
+    "builder": "NIXPACKS"
+  },
+  "deploy": {
+    "startCommand": "python server.py",
+    "healthcheckPath": "/api/health"
+  }
+}
