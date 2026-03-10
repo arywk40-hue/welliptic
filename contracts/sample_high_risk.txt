@@ -1,0 +1,75 @@
+PROFESSIONAL SERVICES AGREEMENT
+
+This Agreement is entered into as of January 1, 2026, between TechCorp Inc. ("Client") and Consultant Pro LLC ("Consultant").
+
+1. SCOPE OF SERVICES
+
+The Consultant shall provide software development and technical consulting services as directed by the Client. The scope of services may be modified at any time at the Client's sole discretion without additional compensation.
+
+2. COMPENSATION AND PAYMENT TERMS
+
+Consultant shall be paid a monthly retainer of $5,000. Client reserves the right to withhold payment for any reason deemed appropriate by Client's management. Late payments shall incur a penalty of 5% per week with no maximum cap. All invoices must be submitted in Client's proprietary format and failure to do so may result in automatic forfeiture of payment for that period.
+
+3. INTELLECTUAL PROPERTY RIGHTS
+
+Consultant hereby assigns to Client, in perpetuity and worldwide, all rights, title, and interest in any work product, ideas, inventions, or intellectual property created during the term of this Agreement or within 24 months following termination. This includes work performed outside of billable hours, personal projects, and any inventions conceived using publicly available information. Consultant waives all moral rights and agrees to execute any documents necessary to perfect Client's ownership rights.
+
+4. NON-COMPETE AND EXCLUSIVITY
+
+During the term of this Agreement and for a period of five (5) years following termination, Consultant agrees not to:
+   a) Provide services to any company in the technology sector worldwide
+   b) Work for any current or former client of the Client
+   c) Engage in any business activity that Client deems competitive
+   d) Solicit or accept work from any third party without Client's written consent
+
+Violation of this clause shall result in liquidated damages of $500,000 per violation, and Client shall have the right to seek unlimited injunctive relief.
+
+5. CONFIDENTIALITY
+
+Consultant agrees to maintain strict confidentiality regarding all Client information in perpetuity. This obligation survives termination indefinitely. Disclosure of any information, whether marked confidential or not, shall be presumed to cause irreparable harm to Client.
+
+6. INDEMNIFICATION
+
+Consultant agrees to indemnify, defend, and hold harmless Client from any and all claims, damages, costs, or liabilities of any nature whatsoever, including but not limited to claims arising from Client's own negligence or willful misconduct. Consultant shall have no liability cap and agrees to maintain professional liability insurance with minimum coverage of $10,000,000 at Consultant's sole expense.
+
+7. TERMINATION
+
+Client may terminate this Agreement immediately at any time for any reason or no reason. Upon termination, Consultant must immediately cease all work and forfeit any unpaid compensation. Consultant may only terminate this Agreement with 180 days' written notice and payment of a termination fee equal to twelve months' retainer, plus any costs incurred by Client in finding a replacement.
+
+8. LIMITATION OF LIABILITY
+
+Client shall have no liability to Consultant for any indirect, incidental, special, consequential, or punitive damages under any circumstances. In no event shall Client's total liability exceed $100, regardless of the nature or magnitude of Consultant's damages.
+
+9. AUTOMATIC RENEWAL
+
+This Agreement shall automatically renew for successive one-year terms unless Consultant provides written notice of non-renewal at least 365 days prior to the end of the then-current term. Failure to provide timely notice shall bind Consultant to an additional year under the same terms, including any modifications Client has unilaterally implemented.
+
+10. DISPUTE RESOLUTION
+
+Any disputes arising under this Agreement shall be resolved exclusively through binding arbitration in Client's jurisdiction, with all costs borne by Consultant regardless of outcome. Consultant waives all rights to class action proceedings, jury trial, and appeal. The arbitrator shall be selected by Client from a panel of Client's choosing.
+
+11. WORK REQUIREMENTS
+
+Consultant shall be available 24 hours per day, 7 days per week to respond to Client requests within 2 hours. Failure to respond shall constitute material breach. Consultant must work exclusively from Client's premises unless otherwise directed, and must surrender all personal electronic devices for inspection upon Client's request.
+
+12. ASSIGNMENT
+
+Client may assign this Agreement to any third party without notice or consent. Consultant may not assign any rights or delegate any duties under this Agreement.
+
+13. GOVERNING LAW
+
+This Agreement shall be governed by the laws of Client's preferred jurisdiction, which Client may change from time to time. Consultant submits to exclusive jurisdiction in any forum selected by Client and waives any objection to venue or inconvenience.
+
+14. MODIFICATION
+
+Client reserves the right to modify any terms of this Agreement at any time without notice. Continued performance by Consultant after modification constitutes acceptance of the new terms.
+
+15. ENTIRE AGREEMENT
+
+This Agreement constitutes the entire agreement and supersedes all prior understandings. Any representations made during negotiations are expressly disclaimed and shall have no effect.
+
+IN WITNESS WHEREOF, the parties have executed this Agreement.
+
+____________________          ____________________
+Client                         Consultant
+Date: _____________           Date: _____________
