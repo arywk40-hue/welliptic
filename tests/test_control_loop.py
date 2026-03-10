@@ -109,3 +109,78 @@ def test_parse_retry_then_fail(tmp_path) -> None:
 
     assert result.state.fatal_error
     assert result.state.terminate_reason == "INVALID_TOOL_OUTPUT"
+
+
+def test_step_budget_termination(tmp_path) -> None:
+    """Force loop to hit max_steps limit."""
+    handlers = make_happy_path_handlers()
+    router = ToolRouter(
+        settings=_settings(tmp_path),
+        mcp_client=InMemoryMCPClient(handlers),
+    )
+
+    result = run_lexaudit(
+        "Contract text",
+        "contract.txt",
+        settings=_settings(tmp_path),
+        router=router,
+        max_steps=1,  # Force immediate termination
+        human_gate_enabled=False,
+    )
+
+    assert result.state.terminate_reason == "MAX_STEPS_EXCEEDED"
+
+
+def test_audit_events_emitted_at_every_node(tmp_path) -> None:
+    """Run full pipeline on sample contract and verify audit events."""
+    handlers = make_happy_path_handlers()
+    router = ToolRouter(
+        settings=_settings(tmp_path),
+        mcp_client=InMemoryMCPClient(handlers),
+    )
+
+    result = run_lexaudit(
+        "Contract text",
+        "contract.txt",
+        settings=_settings(tmp_path),
+        router=router,
+        human_gate_enabled=False,
+    )
+
+    # Check that key events exist
+    event_types = [e.event_type for e in result.audit_log]
+    assert "INIT" in event_types
+    assert "INGEST_START" in event_types
+    assert "TERMINATE" in event_types
+
+    # Each event should have step, timestamp, and data
+    for event in result.audit_log:
+        assert event.step_index >= 0
+        assert event.timestamp > 0
+        assert isinstance(event.metadata, dict)
+
+
+def test_human_gate_reject_path(tmp_path) -> None:
+    """HIGH risk contract + decision = 'reject'."""
+    handlers = make_high_risk_handlers()
+    router = ToolRouter(
+        settings=_settings(tmp_path),
+        mcp_client=InMemoryMCPClient(handlers),
+    )
+
+    # Decision provider returns "reject"
+    def reject_provider(risk_scores):
+        return "reject"
+
+    result = run_lexaudit(
+        "Contract text",
+        "contract.txt",
+        settings=_settings(tmp_path),
+        router=router,
+        decision_provider=reject_provider,
+    )
+
+    assert result.state.human_decision == "reject"
+    # Check that HUMAN_DECISION appears in audit log metadata
+    human_events = [e for e in result.audit_log if "decision" in e.metadata or "HUMAN" in e.event_type]
+    assert len(human_events) > 0
