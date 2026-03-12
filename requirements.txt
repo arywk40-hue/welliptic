@@ -15,6 +15,9 @@ weil-ai>=0.1.0
 fastapi>=0.115.0
 uvicorn>=0.30.0
 
+# Weilchain MCP server (FastMCP + streamable-http transport)
+fastmcp>=3.1.0
+
 # Optional legacy stack retained for reference modules
 langgraph>=1.0.10
 langchain>=0.3.0

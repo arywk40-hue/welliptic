@@ -146,12 +146,14 @@ ${result.audit_events.length} events logged on Weilchain
       <div className="flex items-start justify-between mb-8 gap-4">
         <div>
           <div className="flex items-center gap-3 mb-2">
-            {result.human_decision === 'approve'
+            {result.human_decision === 'approve' || result.human_decision === 'auto-approved'
               ? <CheckCircle className="w-6 h-6 text-volt" />
               : <XCircle    className="w-6 h-6 text-pink-400" />
             }
-            <span className={`font-mono text-sm font-bold ${result.human_decision === 'approve' ? 'text-volt' : 'text-pink-400'}`}>
-              {result.human_decision === 'approve' ? 'CONTRACT APPROVED' : 'CONTRACT REJECTED'}
+            <span className={`font-mono text-sm font-bold ${result.human_decision === 'approve' || result.human_decision === 'auto-approved' ? 'text-volt' : 'text-pink-400'}`}>
+              {result.human_decision === 'approve' ? 'CONTRACT APPROVED'
+                : result.human_decision === 'auto-approved' ? 'CONTRACT AUTO-APPROVED'
+                : 'CONTRACT REJECTED'}
             </span>
           </div>
           <h2 className="font-display font-bold text-3xl text-white">Final Report</h2>

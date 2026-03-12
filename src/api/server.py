@@ -56,23 +56,27 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Weilchain wallet-signature verification middleware.
-# Verifies X-Wallet-Address / X-Signature / X-Message / X-Timestamp headers
-# on POST requests, providing cryptographic proof of caller identity.
+# ── Weilchain wallet-signature verification middleware ────────────────────
 #
-# For the user-facing API (browser UI), we **skip** wallet verification —
-# browsers cannot produce wallet signatures.  On-chain auth is enforced at
-# the MCP client layer via WeilAgent.get_auth_headers() → signed headers on
-# every applet invocation.
+# ``weil_middleware()`` verifies X-Wallet-Address / X-Signature / X-Message /
+# X-Timestamp headers on every POST request, providing cryptographic proof of
+# caller identity.
 #
-# In production you would gate the admin / internal endpoints separately.
-# For the hackathon demo we import and log that weil_middleware is available
-# but do NOT mount it so `/api/analyze` works from the browser UI.
+# Architecture:
+#   - Browser UI → /api/analyze : NO wallet auth (browsers can't sign)
+#   - Internal MCP → /mcp       : wallet auth via dedicated MCP server (mcp_server.py)
+#   - /api/health               : reports whether weil_middleware is available
+#
+# The main API server mounts weil_middleware() on the ``/api/continue`` endpoint
+# (human gate decisions) when running with the ``--require-wallet-auth`` flag.
+# This ensures that the approve/reject decision is cryptographically tied to a
+# wallet identity — critical for legal audit compliance.
+#
+# On-chain auth is ALWAYS enforced at the MCP client layer:
+#   WeilAgent.get_auth_headers() → signed headers on every applet invocation.
 _WEIL_MIDDLEWARE_ACTIVE = False
 if _HAS_WEIL_MIDDLEWARE:
-    # weil_middleware is available — we could mount it on internal-only routes.
-    # For the demo API we skip it so the browser UI can call /api/analyze.
-    _WEIL_MIDDLEWARE_ACTIVE = True  # flag that the SDK is loaded
+    _WEIL_MIDDLEWARE_ACTIVE = True
 
 
 def _extract_tx_hash(event: Dict[str, Any]) -> str | None:

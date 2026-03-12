@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import sys
 from pathlib import Path
 from typing import List
@@ -44,6 +45,8 @@ def _interactive_decision(risks: List[RiskScore]) -> str:
 def main() -> int:
     parser = argparse.ArgumentParser(description="LexAudit v1 (ADK-oriented loop + MCP tools)")
     parser.add_argument("--serve", action="store_true", help="Start FastAPI server on port 8000")
+    parser.add_argument("--serve-mcp", action="store_true",
+                        help="Start Weilchain-secured MCP server on port 8001")
     parser.add_argument("--input", default="", help="Contract file path (required) or '-' for stdin")
     parser.add_argument("--format", default="text", choices=["text", "json"])
     parser.add_argument("--max-steps", type=int, default=50)
@@ -52,6 +55,16 @@ def main() -> int:
     args = parser.parse_args()
 
     load_dotenv()
+
+    if args.serve_mcp:
+        # Launch the Weilchain-secured MCP server (FastMCP + @secured + weil_middleware)
+        import uvicorn
+        from src.mcp_server import app as mcp_app
+
+        port = int(os.getenv("MCP_SERVER_PORT", "8001"))
+        print(f"🔗 LexAudit MCP Server starting on http://0.0.0.0:{port}/mcp")
+        uvicorn.run(mcp_app, host="0.0.0.0", port=port)
+        return 0
 
     if args.serve:
         import uvicorn
