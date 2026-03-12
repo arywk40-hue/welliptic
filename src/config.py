@@ -23,15 +23,19 @@ class Settings:
     retry_backoff_seconds: float = 0.3
     runs_dir: Path = Path(".runs")
     mcp_endpoint: str = ""
-    weilchain_node_url: str = ""
+    weilchain_node_url: str = "https://sentinel.weilliptic.ai"
+    weilchain_pod_url: str = "https://marauder.weilliptic.ai"
     clause_extractor_applet_id: str = ""
     risk_scorer_applet_id: str = ""
     weilchain_wallet_path: str = "private_key.wc"
     mcp_timeout_seconds: float = 20.0
     enforce_mcp: bool = True
+    disable_weil_sdk: bool = False
 
 
 def load_settings() -> Settings:
+    disable_sdk_env = os.getenv("DISABLE_WEIL_SDK", "").lower() in {"1", "true", "yes"}
+    disable_sdk_pytest = "PYTEST_CURRENT_TEST" in os.environ
     return Settings(
         anthropic_api_key=os.getenv("ANTHROPIC_API_KEY", ""),
         openai_api_key=os.getenv("OPENAI_API_KEY", ""),
@@ -48,10 +52,12 @@ def load_settings() -> Settings:
         retry_backoff_seconds=float(os.getenv("LEXAUDIT_RETRY_BACKOFF", "0.3")),
         runs_dir=Path(os.getenv("LEXAUDIT_RUNS_DIR", ".runs")),
         mcp_endpoint=os.getenv("WEILCHAIN_MCP_ENDPOINT", ""),
-        weilchain_node_url=os.getenv("WEILCHAIN_NODE_URL", "").strip(),
+        weilchain_node_url=os.getenv("WEILCHAIN_NODE_URL", "https://sentinel.weilliptic.ai").strip(),
+        weilchain_pod_url=os.getenv("WEILCHAIN_POD_URL", "https://marauder.weilliptic.ai").strip(),
         clause_extractor_applet_id=os.getenv("CLAUSE_EXTRACTOR_APPLET_ID", "").strip(),
         risk_scorer_applet_id=os.getenv("RISK_SCORER_APPLET_ID", "").strip(),
         weilchain_wallet_path=os.getenv("WEILCHAIN_WALLET_PATH", "private_key.wc").strip(),
         mcp_timeout_seconds=float(os.getenv("WEILCHAIN_MCP_TIMEOUT", "20.0")),
         enforce_mcp=os.getenv("LEXAUDIT_ENFORCE_MCP", "true").lower() in {"1", "true", "yes"},
+        disable_weil_sdk=disable_sdk_env or disable_sdk_pytest,
     )

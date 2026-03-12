@@ -1,5 +1,9 @@
+const path = require('path')
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Silence "multiple lockfiles" warning — pin workspace root to this UI dir
+  outputFileTracingRoot: path.join(__dirname),
   async rewrites() {
     // Only proxy /api/* to backend during development
     if (process.env.NODE_ENV === 'development') {

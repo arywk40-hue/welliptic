@@ -4,6 +4,10 @@ const API_BASE = (process.env.NEXT_PUBLIC_API_URL || process.env.NEXT_PUBLIC_LEX
 
 type BackendPayload = {
   session_id?: string
+  tx_hash?: string | null
+  tx_explorer_url?: string | null
+  explorer_url?: string | null
+  tx_hashes?: string[]
   state?: {
     filename?: string
     clauses?: Array<{ id: number; title: string; text: string }>
@@ -20,6 +24,8 @@ type BackendPayload = {
   report_text?: string
   report_json?: {
     filename?: string
+    tx_hash?: string | null
+    weilchain_enabled?: boolean
     risk_results?: Array<{
       clause_id: number
       clause_title: string
@@ -142,7 +148,17 @@ function toAnalysisResult(payload: BackendPayload, fallbackFilename: string): An
   const state = payload.state || {}
   const riskRows = state.risk_results || payload.report_json?.risk_results || []
   const auditEvents = normalizeAuditEvents(payload.audit_log)
-  const txHash = auditEvents.find((event) => event.tx_hash)?.tx_hash
+
+  // Prefer the top-level tx_hash (set by the final AUDIT_COMPLETE write),
+  // then check report_json.tx_hash, then scan audit_log events as last resort.
+  const txHash =
+    (typeof payload.tx_hash === 'string' && payload.tx_hash) ||
+    (typeof payload.report_json?.tx_hash === 'string' && payload.report_json.tx_hash) ||
+    auditEvents.find((event) => event.tx_hash)?.tx_hash ||
+    undefined
+
+  const txExplorerUrl =
+    (typeof payload.tx_explorer_url === 'string' && payload.tx_explorer_url) || undefined
 
   return {
     session_id: String(payload.session_id || `lex-${Date.now()}`),
@@ -153,6 +169,7 @@ function toAnalysisResult(payload: BackendPayload, fallbackFilename: string): An
     human_decision: typeof state.human_decision === 'string' ? state.human_decision : undefined,
     final_report: payload.report_text,
     tx_hash: txHash,
+    tx_explorer_url: txExplorerUrl,
   }
 }
 

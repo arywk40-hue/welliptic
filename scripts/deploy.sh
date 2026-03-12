@@ -2,7 +2,7 @@
 # ============================================================
 #  LexAudit — Full Deploy Pipeline
 #  1. Build Rust WASM applets
-#  2. Deploy to Weilchain via JS SDK
+#  2. Deploy to Weilchain Asia-South POD (marauder)
 #  Usage:  ./scripts/deploy.sh
 # ============================================================
 set -euo pipefail
@@ -11,8 +11,16 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
 cd "$PROJECT_DIR"
 
+POD_URL="https://marauder.weilliptic.ai"
+SENTINEL_URL="https://sentinel.weilliptic.ai"
+WIDL_DIR="src/applets"
+WASM_DIR="src/applets/wasm"
+CONFIG="src/applets/lexaudit.yaml"
+
 echo "═══════════════════════════════════════════"
 echo "  LexAudit — Deploy Pipeline"
+echo "  POD:      $POD_URL"
+echo "  Sentinel: $SENTINEL_URL"
 echo "═══════════════════════════════════════════"
 
 # --- Step 1: Pre-flight checks ---
@@ -40,8 +48,8 @@ echo "▸ Building WASM applets..."
 cd rust_applets
 ./build.sh
 cd "$PROJECT_DIR"
-echo "  ✓ clause_extractor.wasm: $(wc -c < src/applets/wasm/clause_extractor.wasm) bytes"
-echo "  ✓ risk_scorer.wasm:      $(wc -c < src/applets/wasm/risk_scorer.wasm) bytes"
+echo "  ✓ clause_extractor.wasm: $(wc -c < $WASM_DIR/clause_extractor.wasm) bytes"
+echo "  ✓ risk_scorer.wasm:      $(wc -c < $WASM_DIR/risk_scorer.wasm) bytes"
 
 # --- Step 3: Install JS SDK (if needed) ---
 if [ ! -d "node_modules/@weilliptic" ]; then
@@ -50,14 +58,34 @@ if [ ! -d "node_modules/@weilliptic" ]; then
   npm install
 fi
 
-# --- Step 4: Deploy to Weilchain ---
+# --- Step 4: Deploy to Weilchain via JS SDK ---
 echo ""
-echo "▸ Deploying to Weilchain sentinel..."
-node scripts/deploy_applets.mjs
+echo "▸ Deploying to Weilchain (marauder POD)..."
+node scripts/deploy_applets.mjs --pod asia-south
+
+# --- Step 5: Deploy via weilliptic CLI (alternative) ---
+# Uncomment these if using the weilliptic CLI instead of the JS SDK:
+#
+# echo "📦 Deploying clause_extractor..."
+# weilliptic deploy \
+#   --widl-file $WIDL_DIR/clause_extractor.widl \
+#   --file-path $WASM_DIR/clause_extractor.wasm \
+#   --config-file $CONFIG \
+#   --pod-url $POD_URL \
+#   --node-url $SENTINEL_URL \
+#   --wallet private_key.wc
+#
+# echo "📦 Deploying risk_scorer..."
+# weilliptic deploy \
+#   --widl-file $WIDL_DIR/risk_scorer.widl \
+#   --file-path $WASM_DIR/risk_scorer.wasm \
+#   --config-file $CONFIG \
+#   --pod-url $POD_URL \
+#   --node-url $SENTINEL_URL \
+#   --wallet private_key.wc
 
 echo ""
 echo "═══════════════════════════════════════════"
-echo "  ✓ Deploy complete!"
-echo "  → Update .env with the applet IDs above"
-echo "  → Then run: make serve"
+echo "  ✅ Both applets deployed to marauder POD!"
+echo "  View at: $POD_URL"
 echo "═══════════════════════════════════════════"

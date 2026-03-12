@@ -225,7 +225,7 @@ def run_lexaudit(
 
     session_id = str(uuid.uuid4())
     audit = AuditLogger(cfg.runs_dir, session_id)
-    weil_audit = WeilAuditLogger(cfg.weilchain_wallet_path)
+    weil_audit = WeilAuditLogger(cfg.weilchain_wallet_path, sentinel_host=cfg.weilchain_node_url)
 
     # Inject Weilchain signed auth headers into the MCP router so every
     # applet invocation is cryptographically authenticated via weil_middleware().
@@ -606,6 +606,38 @@ def _finalize_result(
         error=state.error_message,
     )
 
+    # ── Final on-chain audit record ──────────────────────────────────────
+    # Write the complete audit summary to Weilchain as a single final record.
+    # This is the canonical transaction that represents the entire audit run.
+    # The returned tx_hash is the one surfaced in the report.
+    final_tx_hash: Optional[str] = None
+    if not pending_human_review and weil_audit.enabled:
+        final_audit_payload = {
+            "session_id": state.session_id,
+            "filename": state.filename,
+            "decision": state.human_decision,
+            "terminate_reason": state.terminate_reason,
+            "summary": report["report_json"].get("summary", {}),
+            "event_count": audit.step_index,
+            "wallet_address": weil_audit.wallet_address,
+        }
+        weil_audit.emit("AUDIT_COMPLETE", final_audit_payload)
+        # The last tx_result is the AUDIT_COMPLETE write
+        if weil_audit.tx_results:
+            latest = weil_audit.tx_results[-1]
+            final_tx_hash = latest.get("tx_hash")
+            # If the AUDIT_COMPLETE write returned IN_PROGRESS, use the hash
+            # of the most recent confirmed transaction from earlier events
+            if not final_tx_hash:
+                for tx in reversed(weil_audit.tx_results):
+                    if tx.get("tx_hash"):
+                        final_tx_hash = tx["tx_hash"]
+                        break
+
+    # Attach the final tx_hash to the report JSON so it flows through to the UI
+    report["report_json"]["tx_hash"] = final_tx_hash
+    report["report_json"]["weilchain_enabled"] = weil_audit.enabled
+
     summary_path = Path(audit.runs_dir) / (state.session_id or "unknown") / "audit_summary.json"
     audit.summary(
         summary_path,
@@ -617,6 +649,7 @@ def _finalize_result(
             "weilchain_enabled": weil_audit.enabled,
             "weilchain_tx_count": len(weil_audit.tx_results),
             "weilchain_txns": weil_audit.tx_results,
+            "final_tx_hash": final_tx_hash,
         },
     )
 
@@ -630,4 +663,5 @@ def _finalize_result(
         report_json=report["report_json"],
         pending_human_review=pending_human_review,
         weil_audit_logger=weil_audit,
+        final_tx_hash=final_tx_hash,
     )

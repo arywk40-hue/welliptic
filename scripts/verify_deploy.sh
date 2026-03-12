@@ -27,7 +27,7 @@ echo "▸ Environment"
 check ".env exists"              "test -f .env"
 check "private_key.wc exists"    "test -f private_key.wc"
 check "ANTHROPIC_API_KEY set"    "grep -q 'ANTHROPIC_API_KEY=sk-' .env"
-check "WEILCHAIN_NODE_URL set"   "grep -q 'sentinel.unweil.me' .env"
+check "WEILCHAIN_NODE_URL set"   "grep -q 'sentinel.weilliptic.ai' .env"
 check "CLAUSE_EXTRACTOR set"     "grep -q 'CLAUSE_EXTRACTOR_APPLET_ID=aaaa' .env"
 check "RISK_SCORER set"          "grep -q 'RISK_SCORER_APPLET_ID=aaaa' .env"
 

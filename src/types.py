@@ -92,6 +92,7 @@ class AuditResult:
     report_json: Dict[str, Any]
     pending_human_review: bool
     weil_audit_logger: Optional[Any] = None  # WeilAuditLogger, avoid circular import
+    final_tx_hash: Optional[str] = None
 
     @property
     def clauses(self) -> List[Clause]:
@@ -113,8 +114,11 @@ class AuditResult:
             "report_text": self.report_text,
             "report_json": self.report_json,
             "pending_human_review": self.pending_human_review,
+            # Expose the final on-chain tx_hash at the top level so the UI
+            # can display it directly without scanning the audit_log events.
+            "tx_hash": self.final_tx_hash,
         }
-        # Add tx_hashes from WeilAuditLogger if available
+        # Also include all tx_hashes from individual audit events
         if self.weil_audit_logger and hasattr(self.weil_audit_logger, 'get_tx_hashes'):
             result["tx_hashes"] = self.weil_audit_logger.get_tx_hashes()
         return result

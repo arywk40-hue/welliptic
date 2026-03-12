@@ -1,4 +1,8 @@
 # src/agent/graph.py
+from __future__ import annotations
+
+from typing import Any
+
 from langgraph.graph import StateGraph, END
 from src.agent.state import AgentState
 from src.agent.nodes import (
@@ -22,7 +26,7 @@ def should_continue_scoring(state: AgentState) -> str:
         return "report"
     return "continue_scoring"
 
-def build_graph() -> StateGraph:
+def build_graph() -> Any:
     g = StateGraph(AgentState)
 
     # Add all nodes

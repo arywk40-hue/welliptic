@@ -167,70 +167,49 @@ def test_full_pipeline_with_local_fallback(tmp_path):
 
 
 def test_groq_llm_delegation_risk_scoring(monkeypatch, tmp_path):
-    """Mock Groq response and verify it matches WIDL RiskScore schema."""
-    import json
+    """Real Groq API call — verify it returns a valid WIDL RiskScore schema.
 
-    # Mock Groq client and response
-    class MockGroqCompletion:
-        def __init__(self, content):
-            self.content = content
+    Uses the live GROQ_API_KEY from .env (llama-3.3-70b-versatile).
+    Skipped automatically if GROQ_API_KEY is not set.
+    """
+    import os
+    import pytest
 
-    class MockGroqChoice:
-        def __init__(self, content):
-            self.message = MockGroqCompletion(content)
+    groq_key = os.getenv("GROQ_API_KEY", "")
+    if not groq_key:
+        pytest.skip("GROQ_API_KEY not set — skipping live Groq test")
 
-    class MockGroqResponse:
-        def __init__(self, content):
-            self.choices = [MockGroqChoice(content)]
-
-    class MockGroqClient:
-        def __init__(self, api_key):
-            pass
-
-        @property
-        def chat(self):
-            return self
-
-        @property
-        def completions(self):
-            return self
-
-        def create(self, **kwargs):
-            # Return a valid WIDL RiskScore response
-            response_json = json.dumps({
-                "risk_level": "HIGH",
-                "confidence": "0.9",
-                "reason": "Test risk reason",
-                "flags": [{"code": "TEST_FLAG", "description": "Test description"}]
-            })
-            return MockGroqResponse(response_json)
-
-    # Monkeypatch Groq import
-    import sys
-    import types
-    groq_module = types.ModuleType("groq")
-    groq_module.Groq = MockGroqClient
-    sys.modules["groq"] = groq_module
-
-    # Set environment to use Groq
+    # Ensure env is pointing at Groq
     monkeypatch.setenv("USE_GROQ", "true")
-    monkeypatch.setenv("GROQ_API_KEY", "test-key")
-    monkeypatch.setenv("GROQ_MODEL", "llama-3.3-70b-versatile")
+    monkeypatch.setenv("GROQ_API_KEY", groq_key)
+    monkeypatch.setenv("GROQ_MODEL", os.getenv("GROQ_MODEL", "llama-3.3-70b-versatile"))
 
-    # Use local fallback with LLM delegation
     from src.tools.local_fallback import _score_single
 
-    # Test direct risk scoring
+    # HIGH-risk clause — non-compete language that Groq should flag
     result = _score_single(
-        clause_id=1,
-        clause_title="Test Clause",
-        clause_text="This is a test clause with severe penalties",
+        clause_id=2,
+        clause_title="Non-Compete",
+        clause_text=(
+            "For a period of 10 years worldwide, the Receiving Party shall not engage "
+            "in any business that competes with the Disclosing Party. "
+            "This restriction is irrevocable and perpetual."
+        ),
     )
 
-    # Verify schema compliance
+    print(f"\n  Groq result → risk_level={result['risk_level']} "
+          f"confidence={result['confidence']} flags={result['flags']}")
+
+    # Schema compliance (same assertions as before)
     assert result["risk_level"] in ["LOW", "MEDIUM", "HIGH"]
     assert isinstance(result["confidence"], str)
+    assert float(result["confidence"]) > 0.0
     assert isinstance(result["flags"], list)
     for flag in result["flags"]:
         assert "code" in flag
         assert "description" in flag
+
+    # Semantic assertion — Groq should recognise this as HIGH risk
+    assert result["risk_level"] == "HIGH", (
+        f"Expected HIGH risk for worldwide irrevocable non-compete, got {result['risk_level']}"
+    )

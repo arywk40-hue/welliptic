@@ -48,7 +48,8 @@
                     │  │ (WASM)   │                     │
                     │  └──────────┘                     │
                     │                                   │
-                    │  Sentinel: sentinel.unweil.me     │
+                    │  Sentinel: sentinel.weilliptic.ai  │
+                    │  POD:      marauder.weilliptic.ai  │
                     └───────────────────────────────────┘
 ```
 

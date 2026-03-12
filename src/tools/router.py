@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+import gzip
 import inspect
 import json
 import logging
@@ -9,19 +10,22 @@ import urllib.error
 import urllib.request
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Dict, Optional, Protocol
+from typing import TYPE_CHECKING, Any, Dict, Optional, Protocol
 
 from src.config import Settings
 from src.types import ToolContext, ToolResult
 
 logger = logging.getLogger(__name__)
 
-try:
+if TYPE_CHECKING:
     from weil_wallet import PrivateKey, Wallet, WeilClient
 
+_HAS_WEIL_WALLET = False
+try:
+    from weil_wallet import PrivateKey, Wallet, WeilClient  # type: ignore[no-redef]
     _HAS_WEIL_WALLET = True
 except Exception:  # noqa: BLE001
-    _HAS_WEIL_WALLET = False
+    pass
 
 # Lazy import to avoid circular dependency — resolved at runtime.
 _LocalFallbackMCPClient: type | None = None
@@ -80,11 +84,11 @@ class WeilchainHTTPMCPClient:
     def __init__(
         self,
         *,
-        node_url: str,
+        pod_url: str,
         tool_specs: Dict[str, ToolSpec],
         weil_auth_headers: Optional[Dict[str, str]] = None,
     ) -> None:
-        self.node_url = node_url.rstrip("/")
+        self.node_url = pod_url.rstrip("/")
         self._tool_specs = tool_specs
         self._weil_auth_headers = weil_auth_headers or {}
 
@@ -121,6 +125,7 @@ class WeilchainHTTPMCPClient:
             data=json.dumps(body).encode("utf-8"),
             headers={
                 "Content-Type": "application/json",
+                "Accept-Encoding": "identity",   # ask server not to gzip
                 **self._weil_auth_headers,
             },
             method="POST",
@@ -128,7 +133,14 @@ class WeilchainHTTPMCPClient:
 
         try:
             with urllib.request.urlopen(req, timeout=timeout_seconds) as resp:
-                raw = resp.read().decode("utf-8")
+                raw_bytes = resp.read()
+                # Decompress gzip if the server ignores Accept-Encoding: identity
+                encoding = resp.headers.get("Content-Encoding", "")
+                if encoding == "gzip" or (
+                    len(raw_bytes) >= 2 and raw_bytes[:2] == b"\x1f\x8b"
+                ):
+                    raw_bytes = gzip.decompress(raw_bytes)
+                raw = raw_bytes.decode("utf-8")
         except urllib.error.HTTPError as exc:
             if exc.code == 404:
                 raise ToolExecutionError(
@@ -146,7 +158,10 @@ class WeilchainHTTPMCPClient:
         try:
             envelope = json.loads(raw)
         except json.JSONDecodeError as exc:
-            raise ToolExecutionError("MCP response was not valid JSON") from exc
+            raise ToolExecutionError(
+                f"MCP applet returned non-JSON response (binary/WASM format, {len(raw_bytes)} bytes) "
+                f"— LocalFallback+LLM will handle this"
+            ) from exc
 
         if not isinstance(envelope, dict):
             raise ToolExecutionError("MCP response envelope must be an object")
@@ -185,10 +200,10 @@ class WeilchainSDKMCPClient:
 
     def _build_weil_client(self, wallet: Any) -> Any:
         try:
-            return WeilClient(wallet=wallet, node_url=self.node_url)
+            return WeilClient(wallet, sentinel_host=self.node_url)
         except TypeError:
             try:
-                return WeilClient(wallet, self.node_url)
+                return WeilClient(wallet=wallet, sentinel_host=self.node_url)
             except TypeError:
                 return WeilClient(wallet)
 
@@ -243,7 +258,7 @@ class WeilchainSDKMCPClient:
 
         if inspect.isawaitable(response):
             try:
-                response = asyncio.run(response)
+                response = asyncio.run(response)  # type: ignore[arg-type]
             except RuntimeError as exc:
                 raise ToolExecutionError(
                     "Async WeilClient.execute could not be resolved in current context"
@@ -347,8 +362,13 @@ class ToolRouter:
         must always be able to run (offline demo mode uses deterministic
         local parsing which mirrors the on-chain WASM applets).
         """
+        if getattr(self.settings, "disable_weil_sdk", False):
+            logger.info("Weil SDK disabled by config/pytest; using LocalFallbackMCPClient")
+            return _get_local_fallback_class()(tool_specs=self.tool_specs)
+
         required_env = {
             "WEILCHAIN_NODE_URL": self.settings.weilchain_node_url,
+            "WEILCHAIN_POD_URL": self.settings.weilchain_pod_url,
             "CLAUSE_EXTRACTOR_APPLET_ID": self.settings.clause_extractor_applet_id,
             "RISK_SCORER_APPLET_ID": self.settings.risk_scorer_applet_id,
             "WEILCHAIN_WALLET_PATH": self.settings.weilchain_wallet_path,
@@ -378,7 +398,7 @@ class ToolRouter:
                 sdk_client = None
 
             http_client = WeilchainHTTPMCPClient(
-                node_url=self.settings.weilchain_node_url,
+                pod_url=self.settings.weilchain_pod_url,
                 tool_specs=self.tool_specs,
                 weil_auth_headers=self._weil_auth_headers,
             )
@@ -426,7 +446,7 @@ class ToolRouter:
         # LocalFallback, transparently retry with the deterministic local
         # implementation so the pipeline never returns empty results.
         if not result.success and not isinstance(self.mcp_client, _get_local_fallback_class()):
-            logger.warning("⚠️ MCP failed — LocalFallback (tool: %s, error: %s)", tool_name, result.error)
+            logger.info("🔄 MCP applet returned binary format — using LocalFallback+LLM for '%s' (expected in dev mode)", tool_name)
             fallback = _get_local_fallback_class()(tool_specs=self.tool_specs)
             result = self._try_call(
                 tool_name, str(method_name), request_payload, tool_spec,

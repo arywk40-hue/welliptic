@@ -11,6 +11,7 @@ from __future__ import annotations
 
 from typing import Any, Dict
 
+from src.agent.state import AgentState
 from src.applets.clause_extractor import extract_clauses_from_payload
 from src.applets.risk_scorer import score_clause_from_payload
 from src.types import Clause
@@ -19,7 +20,7 @@ from src.types import Clause
 # ── Node functions ────────────────────────────────────────────────────────
 
 
-def ingest_node(state: Dict[str, Any]) -> Dict[str, Any]:
+def ingest_node(state: AgentState) -> Dict[str, Any]:
     """Validate and normalize the incoming contract text."""
     text = state.get("contract_text", "")
     if not text.strip():
@@ -27,7 +28,7 @@ def ingest_node(state: Dict[str, Any]) -> Dict[str, Any]:
     return {**state, "contract_text": text.strip(), "step_index": state.get("step_index", 0) + 1}
 
 
-def extract_clauses_node(state: Dict[str, Any]) -> Dict[str, Any]:
+def extract_clauses_node(state: AgentState) -> Dict[str, Any]:
     """Extract clauses via the local deterministic parser."""
     contract_text = state.get("contract_text", "")
     clauses = extract_clauses_from_payload({"contract_text": contract_text})
@@ -40,12 +41,12 @@ def extract_clauses_node(state: Dict[str, Any]) -> Dict[str, Any]:
     }
 
 
-def risk_score_node(state: Dict[str, Any]) -> Dict[str, Any]:
+def risk_score_node(state: AgentState) -> Dict[str, Any]:
     """Score the current clause's risk level."""
     clauses = state.get("clauses", [])
     idx = state.get("current_clause_index", 0)
     if idx >= len(clauses):
-        return state
+        return dict(state)
 
     clause_dict = clauses[idx]
     clause = Clause(id=clause_dict["id"], title=clause_dict["title"], text=clause_dict["text"])
@@ -69,12 +70,12 @@ def risk_score_node(state: Dict[str, Any]) -> Dict[str, Any]:
     }
 
 
-def human_gate_node(state: Dict[str, Any]) -> Dict[str, Any]:
+def human_gate_node(state: AgentState) -> Dict[str, Any]:
     """Pause for human review (stub — actual decision comes externally)."""
     return {**state, "pending_human_review": True, "step_index": state.get("step_index", 0) + 1}
 
 
-def generate_report_node(state: Dict[str, Any]) -> Dict[str, Any]:
+def generate_report_node(state: AgentState) -> Dict[str, Any]:
     """Generate the final summary report text."""
     risk_results = state.get("risk_results", [])
     high = [r for r in risk_results if r.get("risk_level") == "HIGH"]

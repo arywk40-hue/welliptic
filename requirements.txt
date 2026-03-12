@@ -3,7 +3,7 @@ anthropic>=0.40.0
 google-genai>=1.0.0
 groq>=0.9.0
 python-dotenv>=1.0.0
-pydantic>=2.0.0
+pydantic>=2.4.0
 
 # Weilchain SDK runtime (install from WADK repo)
 # pip install /path/to/wadk-sdk/adk/python/weil_wallet
@@ -16,12 +16,12 @@ fastapi>=0.115.0
 uvicorn>=0.30.0
 
 # Optional legacy stack retained for reference modules
-langgraph>=0.2.0
+langgraph>=1.0.10
 langchain>=0.3.0
 langchain-anthropic>=0.3.0
 
 # PDF processing
-pypdf>=4.0.0
+pypdf>=6.8.0
 pdfplumber>=0.11.0
 
 # UI (out of v1 core scope but retained)

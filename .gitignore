@@ -36,3 +36,7 @@ Thumbs.db
 .idea/
 *.code-workspace
 .vscode/
+
+.env.render.example
+PPT_PRESENTATION_NOTES.md
+contracts/test_live_demo.txt

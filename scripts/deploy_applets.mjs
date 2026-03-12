@@ -14,7 +14,7 @@
 import fs from 'fs/promises'
 import { WeilWallet } from '@weilliptic/weil-sdk'
 
-const SENTINEL = 'https://sentinel.unweil.me'
+const SENTINEL = 'https://sentinel.weilliptic.ai'
 
 // Allow --pod <id> CLI override (e.g. node deploy_applets.mjs --pod asia-south)
 const podArgIdx = process.argv.indexOf('--pod')

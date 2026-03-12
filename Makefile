@@ -90,7 +90,7 @@ from src.config import Settings; \
 from src.tools.router import ToolRouter, ToolSpec; \
 from src.tools.local_fallback import LocalFallbackMCPClient; \
 ct = Path('contracts/sample_nda.txt').read_text(); \
-s = Settings(anthropic_api_key='', runs_dir=Path('.runs'), enforce_mcp=True, max_retries=1, retry_backoff_seconds=0.0, weilchain_wallet_path='private_key.wc', weilchain_node_url='https://sentinel.unweil.me'); \
+s = Settings(anthropic_api_key='', runs_dir=Path('.runs'), enforce_mcp=True, max_retries=1, retry_backoff_seconds=0.0, weilchain_wallet_path='private_key.wc', weilchain_node_url='https://sentinel.weilliptic.ai', weilchain_pod_url='https://marauder.weilliptic.ai'); \
 specs = {'clause_extractor': ToolSpec(applet_id='aaaaaar6cc2arozt4ycprttocyc62p6sqwuyecuuqzjgdanbdiupplimxa', interface='ClauseExtractor', default_method='extract_clauses'), 'risk_scorer': ToolSpec(applet_id='aaaaaawmbew7e54girflltyb3ox76oyylr4f4tduu2unmzlmjyhnkhe5ba', interface='RiskScorer', default_method='score_clause_risk')}; \
 client = LocalFallbackMCPClient(tool_specs=specs); \
 router = ToolRouter(settings=s, mcp_client=client); \

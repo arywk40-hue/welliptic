@@ -7,18 +7,23 @@ import logging
 import time
 from dataclasses import asdict
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import TYPE_CHECKING, Any, Dict, List, Optional
 
 from src.types import AuditEvent
 
 logger = logging.getLogger(__name__)
 
-try:
+if TYPE_CHECKING:
     from weil_ai import WeilAgent
     from weil_wallet import PrivateKey, TransactionResult, Wallet, WeilClient
+
+_HAS_WEIL_SDK = False
+try:
+    from weil_ai import WeilAgent  # type: ignore[no-redef]
+    from weil_wallet import PrivateKey, TransactionResult, Wallet, WeilClient  # type: ignore[no-redef]
     _HAS_WEIL_SDK = True
 except Exception:  # noqa: BLE001
-    _HAS_WEIL_SDK = False
+    pass
 
 
 def stable_hash(value: Any) -> str:
@@ -110,8 +115,13 @@ class WeilAuditLogger:
     the wallet file doesn't exist, or the chain is unreachable.
     """
 
-    def __init__(self, wallet_path: str) -> None:
+    def __init__(
+        self,
+        wallet_path: str,
+        sentinel_host: str = "https://sentinel.weilliptic.ai",
+    ) -> None:
         self.wallet_path = wallet_path
+        self.sentinel_host = sentinel_host
         self.enabled = False
         self._agent: Any = None
         self._wallet: Any = None
@@ -196,13 +206,19 @@ class WeilAuditLogger:
             sentinel = _LexAuditSentinel()
 
             # Try multiple WeilAgent constructor signatures — the SDK has
-            # changed across versions.
+            # changed across versions.  Always pass sentinel_host so the
+            # WeilClient hits our node (sentinel.weilliptic.ai) instead of
+            # the SDK default (sentinel.unweil.me).
             agent: Any = None
             init_strategies: list[tuple[str, Any]] = [
+                ("WeilAgent(sentinel, wallet=wallet, sentinel_host=host)",
+                 lambda: WeilAgent(sentinel, wallet=self._wallet, sentinel_host=self.sentinel_host)),
                 ("WeilAgent(sentinel, wallet=wallet)",
                  lambda: WeilAgent(sentinel, wallet=self._wallet)),
-                ("WeilAgent(sentinel, self._wallet)",
-                 lambda: WeilAgent(sentinel, self._wallet)),
+                ("WeilAgent(sentinel, private_key_path=wallet_path, sentinel_host=host)",
+                 lambda: WeilAgent(sentinel, private_key_path=self.wallet_path, sentinel_host=self.sentinel_host)),
+                ("WeilAgent(sentinel, private_key_path=wallet_path)",
+                 lambda: WeilAgent(sentinel, private_key_path=self.wallet_path)),
                 ("WeilAgent(sentinel)",
                  lambda: WeilAgent(sentinel)),
             ]
@@ -244,6 +260,15 @@ class WeilAuditLogger:
     def wallet_address(self) -> Optional[str]:
         """Return the hex wallet address, or None if unavailable."""
         return self._wallet_address
+
+    @property
+    def is_active(self) -> bool:
+        """Returns True if WeilAgent is initialized and can sign requests."""
+        try:
+            headers = self._agent.get_auth_headers()
+            return len(headers) >= 2
+        except Exception:  # noqa: BLE001
+            return False
 
     def get_auth_headers(self) -> Dict[str, str]:
         """Return signed auth headers for MCP requests.
@@ -320,9 +345,9 @@ class WeilAuditLogger:
 
 def get_explorer_url(tx_hash: str) -> str:
     """Return Weilchain explorer URL for a transaction hash."""
-    return f"https://explorer.weilliptic.ai/tx/{tx_hash}"
+    return f"https://marauder.weilliptic.ai/tx/{tx_hash}"
 
 
 def get_wallet_explorer_url(address: str) -> str:
     """Return Weilchain explorer URL for a wallet address."""
-    return f"https://explorer.weilliptic.ai/address/{address}"
+    return f"https://marauder.weilliptic.ai/address/{address}"

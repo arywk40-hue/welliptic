@@ -11,6 +11,7 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
 from src import run_lexaudit
+from src.agent.audit import WeilAuditLogger
 from src.config import load_settings
 from src.tools.router import McpUnavailableError, ToolRouter
 
@@ -24,7 +25,7 @@ except Exception:  # noqa: BLE001
 class AnalyseRequest(BaseModel):
     contract_text: str = Field(min_length=1)
     filename: str = "contract.txt"
-    no_human_gate: bool = True
+    no_human_gate: bool = False
     max_steps: int = Field(default=200, ge=1, le=500)
     human_gate_threshold: str = Field(default="HIGH", pattern="^(LOW|MEDIUM|HIGH)$")
 
@@ -126,6 +127,7 @@ def health() -> Dict[str, Any]:
 
     weilchain_ok = bool(
         settings.weilchain_node_url
+        and settings.weilchain_pod_url
         and settings.clause_extractor_applet_id
         and settings.risk_scorer_applet_id
     )
@@ -133,12 +135,16 @@ def health() -> Dict[str, Any]:
     # Determine MCP mode: "real" if all Weilchain config is set, else "local"
     mcp_mode = "real" if weilchain_ok else "local"
 
+    # Live check: can the WeilAgent actually sign requests?
+    weil_logger = WeilAuditLogger(settings.weilchain_wallet_path, sentinel_host=settings.weilchain_node_url)
+    weil_middleware_active = weil_logger.is_active
+
     return {
         "status": "ok",
         "llm": llm_ok,
         "llm_provider": llm_provider,
         "weilchain": weilchain_ok,
-        "weil_middleware": _WEIL_MIDDLEWARE_ACTIVE,
+        "weil_middleware": weil_middleware_active,
         "mcp_mode": mcp_mode,
     }
 
@@ -168,13 +174,23 @@ def _run_analysis(req: AnalyseRequest) -> Dict[str, Any]:
         raise HTTPException(status_code=500, detail=str(exc)) from exc
 
     payload = result.to_dict()
-    payload = _attach_audit_links(payload, settings.weilchain_node_url)
+    payload = _attach_audit_links(payload, settings.weilchain_pod_url)
+
+    # Promote tx_hash from report_json to top level (report_json was set in
+    # _finalize_result; to_dict() also sets it, but be explicit here too)
+    if not payload.get("tx_hash") and isinstance(payload.get("report_json"), dict):
+        payload["tx_hash"] = payload["report_json"].get("tx_hash")
+
+    # Build the Weilchain explorer link for the final tx
+    from src.agent.audit import get_explorer_url, get_wallet_explorer_url
+    final_tx = payload.get("tx_hash")
+    if final_tx:
+        payload["tx_explorer_url"] = get_explorer_url(final_tx)
 
     # Add wallet explorer URL if weil_audit_logger has a wallet address
     if result.weil_audit_logger and hasattr(result.weil_audit_logger, 'wallet_address'):
         wallet_address = result.weil_audit_logger.wallet_address
         if wallet_address:
-            from src.agent.audit import get_wallet_explorer_url
             payload["explorer_url"] = get_wallet_explorer_url(wallet_address)
 
     # Stash result for /api/continue if human gate is pending
@@ -223,7 +239,7 @@ def continue_analysis(req: ContinueRequest) -> Dict[str, Any]:
     _pending_result["pending_human_review"] = False
 
     settings = load_settings()
-    payload = _attach_audit_links(dict(_pending_result), settings.weilchain_node_url)
+    payload = _attach_audit_links(dict(_pending_result), settings.weilchain_pod_url)
 
     # Clear pending state
     _pending_result.clear()

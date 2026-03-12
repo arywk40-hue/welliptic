@@ -43,6 +43,7 @@ export interface AnalysisResult {
   human_decision?: string
   final_report?: string
   tx_hash?: string
+  tx_explorer_url?: string
 }
 
 export interface AgentStep {

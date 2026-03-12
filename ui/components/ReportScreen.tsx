@@ -111,12 +111,16 @@ export default function ReportScreen() {
   ]
 
   const downloadReport = () => {
+    const explorerLine = result.tx_hash
+      ? `Explorer: ${result.tx_explorer_url ?? `https://marauder.weilliptic.ai/tx/${result.tx_hash}`}`
+      : ''
     const text = `LEXAUDIT — FINAL REPORT
 ========================
 Session: ${result.session_id}
 File:    ${result.filename}
 Decision: ${result.human_decision?.toUpperCase() ?? 'AUTO'}
 Tx Hash: ${result.tx_hash ?? 'pending'}
+${explorerLine}
 
 RISK SUMMARY
 HIGH:   ${high.length} clause(s)
@@ -168,17 +172,46 @@ ${result.audit_events.length} events logged on Weilchain
 
       {/* Session metadata */}
       <div className="glass rounded-2xl p-5 mb-6 grid grid-cols-2 md:grid-cols-4 gap-4">
-        {[
-          { icon: <Hash className="w-4 h-4 text-violet-400" />,  label: 'Session', value: result.session_id },
-          { icon: <FileText className="w-4 h-4 text-cyan-400" />, label: 'Clauses', value: `${result.clauses.length} found` },
-          { icon: <Clock className="w-4 h-4 text-amber-400" />,  label: 'Audit Events', value: `${result.audit_events.length} logged` },
-          { icon: <Link className="w-4 h-4 text-volt" />,         label: 'Tx Hash', value: result.tx_hash ? result.tx_hash.slice(0, 10) + '...' : 'pending' },
-        ].map(m => (
-          <div key={m.label}>
-            <div className="flex items-center gap-2 mb-1">{m.icon}<span className="text-white/30 text-xs font-mono">{m.label}</span></div>
-            <div className="font-mono text-sm text-white/70 truncate">{m.value}</div>
+        <div>
+          <div className="flex items-center gap-2 mb-1">
+            <Hash className="w-4 h-4 text-violet-400" />
+            <span className="text-white/30 text-xs font-mono">Session</span>
           </div>
-        ))}
+          <div className="font-mono text-sm text-white/70 truncate">{result.session_id}</div>
+        </div>
+        <div>
+          <div className="flex items-center gap-2 mb-1">
+            <FileText className="w-4 h-4 text-cyan-400" />
+            <span className="text-white/30 text-xs font-mono">Clauses</span>
+          </div>
+          <div className="font-mono text-sm text-white/70">{result.clauses.length} found</div>
+        </div>
+        <div>
+          <div className="flex items-center gap-2 mb-1">
+            <Clock className="w-4 h-4 text-amber-400" />
+            <span className="text-white/30 text-xs font-mono">Audit Events</span>
+          </div>
+          <div className="font-mono text-sm text-white/70">{result.audit_events.length} logged</div>
+        </div>
+        <div>
+          <div className="flex items-center gap-2 mb-1">
+            <Link className="w-4 h-4 text-volt" />
+            <span className="text-white/30 text-xs font-mono">Tx Hash</span>
+          </div>
+          {result.tx_hash ? (
+            <a
+              href={result.tx_explorer_url ?? `https://marauder.weilliptic.ai/tx/${result.tx_hash}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-mono text-sm text-volt/80 hover:text-volt transition-colors truncate block"
+              title={result.tx_hash}
+            >
+              {result.tx_hash.slice(0, 10)}…
+            </a>
+          ) : (
+            <div className="font-mono text-sm text-white/20">pending</div>
+          )}
+        </div>
       </div>
 
       {/* Charts row */}
@@ -248,11 +281,21 @@ ${result.audit_events.length} events logged on Weilchain
               <Shield className="w-4 h-4 text-volt" />
               <div className="flex-1">
                 <div className="font-mono text-xs text-white/30">Weilchain Transaction</div>
-                <div className="font-mono text-xs text-volt/80 mt-0.5">{result.tx_hash}</div>
+                <div className={`font-mono text-xs mt-0.5 ${result.tx_hash ? 'text-volt/80' : 'text-white/20'}`}>
+                  {result.tx_hash ?? 'pending — Weilchain write in progress'}
+                </div>
               </div>
-              <button className="text-white/20 hover:text-white/50 transition-colors">
-                <ExternalLink className="w-4 h-4" />
-              </button>
+              {result.tx_hash && (
+                <a
+                  href={result.tx_explorer_url ?? `https://marauder.weilliptic.ai/tx/${result.tx_hash}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  title="View on Weilchain Explorer"
+                  className="text-white/20 hover:text-volt/70 transition-colors"
+                >
+                  <ExternalLink className="w-4 h-4" />
+                </a>
+              )}
             </div>
 
             {/* Events */}
@@ -267,10 +310,10 @@ ${result.audit_events.length} events logged on Weilchain
       <div className="glass rounded-xl p-4 border border-volt/10 flex items-start gap-3">
         <div className="w-1.5 h-1.5 rounded-full bg-volt mt-1.5 flex-shrink-0" />
         <p className="text-white/30 text-xs font-mono leading-relaxed">
-          Audit trail is currently stored locally. After Weilchain deployment, all{' '}
-          {result.audit_events.length} events will be cryptographically signed on-chain
-          via <span className="text-volt/60">ctx.emit()</span> and verifiable by any party
-          using the session ID above.
+          {result.tx_hash
+            ? <>All {result.audit_events.length} audit events plus the final <span className="text-volt/60">AUDIT_COMPLETE</span> record are cryptographically signed on Weilchain. The canonical tx hash above is the on-chain proof of this audit run, verifiable by any party.</>
+            : <>Audit trail is captured locally. The on-chain write runs at the end of analysis — reload to check if the transaction has been confirmed on Weilchain.</>
+          }
         </p>
       </div>
     </div>
